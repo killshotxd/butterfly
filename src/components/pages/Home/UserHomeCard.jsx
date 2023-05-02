@@ -5,7 +5,7 @@ import { MdWork } from "react-icons/md";
 import { FiExternalLink } from "react-icons/fi";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-import { db } from "../../../firebase";
+import { db } from "../../../Firebase";
 import {
   collection,
   doc,

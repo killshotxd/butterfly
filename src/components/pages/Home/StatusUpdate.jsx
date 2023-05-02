@@ -6,7 +6,7 @@ import { MdOutlineSlowMotionVideo } from "react-icons/md";
 import { AiTwotoneAudio } from "react-icons/ai";
 import { useRef, useState } from "react";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { db, storage } from "../../../firebase";
+import { db, storage } from "../../../Firebase";
 import { addDoc, collection, doc, serverTimestamp } from "firebase/firestore";
 const StatusUpdate = () => {
   const imagePicker = useRef();

@@ -1,3 +1,4 @@
+import SponsorCard from "./SponsorCard";
 import StatusUpdate from "./StatusUpdate";
 import UserHomeCard from "./UserHomeCard";
 
@@ -12,7 +13,9 @@ const Home = () => {
           <div className="StatusUpdate">
             <StatusUpdate />
           </div>
-          <div className="Sponsor">Sponsor</div>
+          <div className="Sponsor">
+            <SponsorCard />
+          </div>
         </div>
       </div>
     </>

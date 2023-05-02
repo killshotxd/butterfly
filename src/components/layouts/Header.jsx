@@ -13,7 +13,7 @@ const Header = () => {
 
   return (
     <>
-      <div className="navbar px-10 bg-base-200">
+      <div className="navbar px-10 ">
         <div className="flex-1">
           <a className=" p-1 text-indigo-50 rounded font-semibold normal-case text-xl bg-cyan-600">
             BUTTERFLY!

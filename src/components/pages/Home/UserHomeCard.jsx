@@ -41,12 +41,12 @@ const UserHomeCard = () => {
           <hr />
 
           {/* PROFILE VIEWS/IMPRESSIONS */}
-          <small>
-            Profile Views in last 7 days :{" "}
+          <small className="flex items-center justify-between">
+            Profile Views in last 7 days
             <span className="font-semibold">21</span>{" "}
           </small>
-          <small>
-            Impressions in last 7 days :{" "}
+          <small className="flex items-center justify-between">
+            Impressions in last 7 days
             <span className="font-semibold">1021</span>
           </small>
           {/* PROFILE VIEWS/IMPRESSIONS */}

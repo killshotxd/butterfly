@@ -12,7 +12,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../../../firebase";
+import { db } from "../../../Firebase";
 import { useEffect, useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
 const Feed = (state) => {

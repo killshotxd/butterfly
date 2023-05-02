@@ -14,7 +14,10 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-const UserHomeCard = () => {
+const UserHomeCard = (state) => {
+  console.log(state);
+  const notUser = state.state;
+  console.log(notUser);
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
@@ -31,40 +34,47 @@ const UserHomeCard = () => {
   // GET USER INFO
   const getUserInfo = async () => {
     const { email } = currentUser;
-    const userRef = doc(db, "users", email);
+    if (email !== notUser.email) {
+      const userRef = doc(db, "users", notUser.email);
 
-    // Get user document snapshot
-    const userDocSnapshot = await getDoc(userRef);
+      // Get user document snapshot
+      const userDocSnapshot = await getDoc(userRef);
 
-    // Check if the user document exists
-    if (userDocSnapshot.exists()) {
-      // Get user data
-      const userData = userDocSnapshot.data();
+      // Check if the user document exists
+      if (userDocSnapshot.exists()) {
+        // Get user data
+        const userData = userDocSnapshot.data();
 
-      // Get user sub-collections
-      const notifyCollectionRef = collection(db, "users", email, "Profile");
+        // Get user sub-collections
+        const notifyCollectionRef = collection(
+          db,
+          "users",
+          notUser.email,
+          "Profile"
+        );
 
-      // Listen for changes in the user sub-collection
-      const unsubscribe = onSnapshot(notifyCollectionRef, (querySnapshot) => {
-        const userCollectionData = querySnapshot.docs.map((doc) => ({
-          did: doc.id,
-          ...doc.data(),
-        }));
+        // Listen for changes in the user sub-collection
+        const unsubscribe = onSnapshot(notifyCollectionRef, (querySnapshot) => {
+          const userCollectionData = querySnapshot.docs.map((doc) => ({
+            did: doc.id,
+            ...doc.data(),
+          }));
 
-        // Combine user data and user sub-collection data
-        const userInfo = {
-          ...userData,
-          Details: userCollectionData,
-        };
+          // Combine user data and user sub-collection data
+          const userInfo = {
+            ...userData,
+            Details: userCollectionData,
+          };
+          console.log(userInfo);
+          setUserinfo(userInfo);
 
-        setUserinfo(userInfo);
+          return userInfo;
+        });
 
-        return userInfo;
-      });
-
-      return unsubscribe;
-    } else {
-      console.log("User document does not exist.");
+        return unsubscribe;
+      } else {
+        console.log("User document does not exist.");
+      }
     }
   };
 
@@ -123,8 +133,17 @@ const UserHomeCard = () => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <div className="avatar online">
-                <div className="w-10 rounded-full">
-                  <img src={currentUser.photoURL} />
+                <div
+                  onClick={() => {
+                    navigate("/profile");
+                  }}
+                  className="w-10 rounded-full"
+                >
+                  {notUser ? (
+                    <img src={notUser.avatar} />
+                  ) : (
+                    <img src={currentUser.photoURL} />
+                  )}
                 </div>
               </div>
               <div className="flex flex-col">

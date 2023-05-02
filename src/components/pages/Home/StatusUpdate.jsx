@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { UserAuth } from "../../context/AuthContext";
 import { BsFileImage } from "react-icons/bs";
 import { MdOutlineSlowMotionVideo } from "react-icons/md";
@@ -87,13 +88,13 @@ const StatusUpdate = () => {
   };
 
   const handlePostUpload = async () => {
-    const UserSpecificPostRef = collection(
-      db,
-      "posts",
-      currentUser.email,
-      "post"
-    );
-    const allPostRef = collection(db, "allPosts");
+    // const UserSpecificPostRef = collection(
+    //   db,
+    //   "posts",
+    //   currentUser.email,
+    //   "post"
+    // );
+    const allPostRef = collection(db, "posts");
 
     if (description == "") {
       return;
@@ -101,6 +102,7 @@ const StatusUpdate = () => {
 
     let post = {
       avatar: currentUser.photoURL,
+      email: currentUser.email,
       img: imageUrl,
       clip: clipUrl,
       audio: audioUrl,
@@ -109,11 +111,13 @@ const StatusUpdate = () => {
       time: serverTimestamp(),
       postedBy: currentUser.displayName,
     };
-    await addDoc(UserSpecificPostRef, post);
+    // await addDoc(UserSpecificPostRef, post);
     await addDoc(allPostRef, post);
 
     setDescription("");
+
     setImageUrl("");
+
     setAudioUrl("");
     setClipUrl("");
   };

@@ -46,14 +46,14 @@ const Feed = () => {
 
           <div className="flex items-center px-2 justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 hover:bg-slate-300 p-1 rounded-full">
                 <AiOutlineHeart /> <span className="text-sm">0</span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 hover:bg-slate-300 p-1 rounded-full">
                 <BiCommentDots /> <span className="text-sm">0</span>
               </div>
             </div>
-            <span>
+            <span className="hover:bg-slate-300 p-1 rounded-full">
               <IoMdShare />
             </span>
           </div>

@@ -23,14 +23,14 @@ const UserHomeCard = () => {
               </div>
             </div>
 
-            <span>
+            <span className="hover:bg-slate-300 p-1 rounded-full">
               <GrUserSettings />
             </span>
           </div>
           {/* NAME,Friends */}
           <hr />
           {/* LOCATION */}
-          <div>
+          <div className="flex flex-col gap-2">
             <small className="flex items-center gap-2">
               <GoLocation /> Uttar Pradesh
             </small>
@@ -56,7 +56,7 @@ const UserHomeCard = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div>
-                <FaLinkedin />
+                <FaLinkedin size={25} />
               </div>
               <div className="flex flex-col">
                 <small className="font-semibold">LinkedIn</small>
@@ -64,7 +64,7 @@ const UserHomeCard = () => {
               </div>
             </div>
 
-            <small>
+            <small className="hover:bg-slate-300 p-1 rounded-full">
               <GrEdit />
             </small>
           </div>
@@ -73,7 +73,7 @@ const UserHomeCard = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div>
-                <FaGithub />
+                <FaGithub size={25} />
               </div>
               <div className="flex flex-col">
                 <small className="font-semibold">Github</small>
@@ -81,7 +81,7 @@ const UserHomeCard = () => {
               </div>
             </div>
 
-            <small>
+            <small className="hover:bg-slate-300 p-1 rounded-full">
               <GrEdit />
             </small>
           </div>

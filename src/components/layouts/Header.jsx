@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
 
 const Header = () => {
+  const navigate = useNavigate();
   const { currentUser, logout } = UserAuth();
 
   const handleLogout = async () => {
@@ -15,7 +17,10 @@ const Header = () => {
     <>
       <div className="navbar px-10 ">
         <div className="flex-1">
-          <a className=" p-1 text-indigo-50 rounded font-semibold normal-case text-xl bg-cyan-600">
+          <a
+            onClick={() => navigate("/")}
+            className=" p-1 text-indigo-50 rounded font-semibold normal-case text-xl bg-cyan-600"
+          >
             BUTTERFLY!
           </a>
         </div>
@@ -65,7 +70,7 @@ const Header = () => {
               tabIndex={0}
               className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
             >
-              <li>
+              <li onClick={() => navigate("/profile")}>
                 <p className="justify-between active:bg-cyan-300">
                   Profile
                   <span className="badge">New</span>

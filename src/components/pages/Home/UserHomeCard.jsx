@@ -2,9 +2,119 @@ import { UserAuth } from "../../context/AuthContext";
 import { GrEdit, GrUserSettings } from "react-icons/gr";
 import { GoLocation } from "react-icons/go";
 import { MdWork } from "react-icons/md";
+import { FiExternalLink } from "react-icons/fi";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
+import { useLocation, useNavigate } from "react-router-dom";
+import { db } from "../../../firebase";
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
 const UserHomeCard = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
+  const [userInfo, setUserinfo] = useState();
   const { currentUser } = UserAuth();
+
+  const [handleLocation, setHandleLocation] = useState("");
+  const [handleDesignation, setHandleDesignation] = useState("");
+  const [handleLinkedin, setHandleLinkedin] = useState("");
+  const [handleGithub, setHandleGithub] = useState("");
+
+  console.log(userInfo);
+
+  // GET USER INFO
+  const getUserInfo = async () => {
+    const { email } = currentUser;
+    const userRef = doc(db, "users", email);
+
+    // Get user document snapshot
+    const userDocSnapshot = await getDoc(userRef);
+
+    // Check if the user document exists
+    if (userDocSnapshot.exists()) {
+      // Get user data
+      const userData = userDocSnapshot.data();
+
+      // Get user sub-collections
+      const notifyCollectionRef = collection(db, "users", email, "Profile");
+
+      // Listen for changes in the user sub-collection
+      const unsubscribe = onSnapshot(notifyCollectionRef, (querySnapshot) => {
+        const userCollectionData = querySnapshot.docs.map((doc) => ({
+          did: doc.id,
+          ...doc.data(),
+        }));
+
+        // Combine user data and user sub-collection data
+        const userInfo = {
+          ...userData,
+          Details: userCollectionData,
+        };
+
+        setUserinfo(userInfo);
+
+        return userInfo;
+      });
+
+      return unsubscribe;
+    } else {
+      console.log("User document does not exist.");
+    }
+  };
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
+  // ADD INFO LINKS TO DB
+
+  const addLocation = async () => {
+    const { email } = currentUser;
+    const detailRef = doc(db, "users", email);
+    let loc = {
+      location: handleLocation,
+    };
+    console.log(loc);
+    await setDoc(detailRef, loc, { merge: true });
+  };
+  const addDesignation = async () => {
+    const { email } = currentUser;
+    const detailRef = doc(db, "users", email);
+    let loc = {
+      designation: handleDesignation,
+    };
+    console.log(loc);
+    await setDoc(detailRef, loc, { merge: true });
+  };
+
+  const addLinkedin = async () => {
+    const { email } = currentUser;
+    const detailRef = doc(db, "users", email);
+    let loc = {
+      linkedin: handleLinkedin,
+    };
+    console.log(loc);
+    await setDoc(detailRef, loc, { merge: true });
+  };
+
+  const addGithub = async () => {
+    const { email } = currentUser;
+    const detailRef = doc(db, "users", email);
+    let loc = {
+      github: handleGithub,
+    };
+    console.log(loc);
+    await setDoc(detailRef, loc, { merge: true });
+  };
+
+  // ADD INFO LINKS TO DB
+
   return (
     <>
       <div className="card w-full bg-base-100 shadow-md">
@@ -23,20 +133,53 @@ const UserHomeCard = () => {
               </div>
             </div>
 
-            <span className="hover:bg-slate-300 p-1 rounded-full">
-              <GrUserSettings />
-            </span>
+            {pathname == "/profile" ? (
+              ""
+            ) : (
+              <span
+                onClick={() => navigate("/profile")}
+                className="hover:bg-slate-300 p-1 rounded-full"
+              >
+                <GrUserSettings />
+              </span>
+            )}
           </div>
           {/* NAME,Friends */}
           <hr />
           {/* LOCATION */}
           <div className="flex flex-col gap-2">
-            <small className="flex items-center gap-2">
-              <GoLocation /> Uttar Pradesh
-            </small>
-            <small className="flex items-center gap-2">
-              <MdWork /> Frontend Developer
-            </small>
+            <div className="flex items-center justify-between">
+              <small className="flex items-center gap-2">
+                <GoLocation />{" "}
+                {userInfo?.location ? userInfo.location : "Location"}
+              </small>
+              {pathname == "/profile" ? (
+                <label
+                  htmlFor="location"
+                  className="hover:bg-slate-300 text-sm p-1 rounded-full"
+                >
+                  <GrEdit />
+                </label>
+              ) : (
+                ""
+              )}
+            </div>
+            <div className="flex items-center justify-between">
+              <small className="flex items-center gap-2">
+                <MdWork />{" "}
+                {userInfo?.designation ? userInfo.designation : "Designation"}
+              </small>
+              {pathname == "/profile" ? (
+                <label
+                  htmlFor="designation"
+                  className="hover:bg-slate-300 text-sm p-1 rounded-full"
+                >
+                  <GrEdit />
+                </label>
+              ) : (
+                ""
+              )}
+            </div>
           </div>
           {/* LOCATION */}
           <hr />
@@ -63,10 +206,33 @@ const UserHomeCard = () => {
                 <small className="text-gray-400">Network Platform</small>
               </div>
             </div>
-
-            <small className="hover:bg-slate-300 p-1 rounded-full">
-              <GrEdit />
-            </small>
+            {pathname == "/profile" ? (
+              <div className="flex items-center gap-2">
+                <a
+                  target="_blank"
+                  rel="noreferrer"
+                  href={userInfo?.linkedin}
+                  className="hover:bg-slate-300 p-1 rounded-full"
+                >
+                  <FiExternalLink />
+                </a>
+                <label
+                  htmlFor="linkedin"
+                  className="hover:bg-slate-300 text-sm p-1 rounded-full"
+                >
+                  <GrEdit />
+                </label>
+              </div>
+            ) : (
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={userInfo?.linkedin}
+                className="hover:bg-slate-300 p-1 rounded-full"
+              >
+                <FiExternalLink />
+              </a>
+            )}
           </div>
           {/* SOCIAL LINKS */}
           {/* SOCIAL LINKS */}
@@ -81,13 +247,139 @@ const UserHomeCard = () => {
               </div>
             </div>
 
-            <small className="hover:bg-slate-300 p-1 rounded-full">
-              <GrEdit />
-            </small>
+            {pathname == "/profile" ? (
+              <div className="flex items-center gap-2">
+                <a
+                  target="_blank"
+                  href={userInfo?.github}
+                  rel="noreferrer"
+                  className="hover:bg-slate-300 p-1 rounded-full"
+                >
+                  <FiExternalLink />
+                </a>
+                <label
+                  htmlFor="github"
+                  className="hover:bg-slate-300 text-sm p-1 rounded-full"
+                >
+                  <GrEdit />
+                </label>
+              </div>
+            ) : (
+              <a
+                target="_blank"
+                href={userInfo?.github}
+                rel="noreferrer"
+                className="hover:bg-slate-300 p-1 rounded-full"
+              >
+                <FiExternalLink />
+              </a>
+            )}
           </div>
           {/* SOCIAL LINKS */}
         </div>
       </div>
+
+      {/* LOCATION */}
+      <input type="checkbox" id="location" className="modal-toggle" />
+      <label htmlFor="location" className="modal cursor-pointer">
+        <label className="modal-box relative" htmlFor="">
+          <h3 className="text-lg font-bold text-center">Location</h3>
+          <div className="m-auto flex items-center justify-center py-2">
+            <input
+              type="text"
+              placeholder="Type here"
+              className="input input-bordered w-full max-w-xs"
+              onChange={(e) => setHandleLocation(e.target.value)}
+            />
+          </div>
+          <div className=" text-center">
+            <button
+              onClick={() => addLocation()}
+              className="p-2 bg-cyan-400 text-white rounded btn-ghost "
+            >
+              Save
+            </button>
+          </div>
+        </label>
+      </label>
+
+      {/* LOCATION */}
+
+      {/* Designation */}
+      <input type="checkbox" id="designation" className="modal-toggle" />
+      <label htmlFor="designation" className="modal cursor-pointer">
+        <label className="modal-box relative" htmlFor="">
+          <h3 className="text-lg font-bold text-center">Designation</h3>
+          <div className="m-auto flex items-center justify-center py-2">
+            <input
+              type="text"
+              placeholder="Type here"
+              className="input input-bordered w-full max-w-xs"
+              onChange={(e) => setHandleDesignation(e.target.value)}
+            />
+          </div>
+          <div className=" text-center">
+            <button
+              onClick={() => addDesignation()}
+              className="p-2 bg-cyan-400 text-white rounded btn-ghost "
+            >
+              Save
+            </button>
+          </div>
+        </label>
+      </label>
+      {/* Designation */}
+
+      {/* Linkedin */}
+      <input type="checkbox" id="linkedin" className="modal-toggle" />
+      <label htmlFor="linkedin" className="modal cursor-pointer">
+        <label className="modal-box relative" htmlFor="">
+          <h3 className="text-lg font-bold text-center">LinkedIn</h3>
+          <div className="m-auto flex items-center justify-center py-2">
+            <input
+              type="text"
+              placeholder="Type here"
+              className="input input-bordered w-full max-w-xs"
+              onChange={(e) => setHandleLinkedin(e.target.value)}
+            />
+          </div>
+          <div className=" text-center">
+            <button
+              onClick={() => addLinkedin()}
+              className="p-2 bg-cyan-400 text-white rounded btn-ghost "
+            >
+              Save
+            </button>
+          </div>
+        </label>
+      </label>
+      {/* Linkedin */}
+
+      {/* Github */}
+      <input type="checkbox" id="github" className="modal-toggle" />
+      <label htmlFor="github" className="modal cursor-pointer">
+        <label className="modal-box relative" htmlFor="">
+          <h3 className="text-lg font-bold text-center">Github</h3>
+          <div className="m-auto flex items-center justify-center py-2">
+            <input
+              type="text"
+              placeholder="Type here"
+              className="input input-bordered w-full max-w-xs"
+              onChange={(e) => setHandleGithub(e.target.value)}
+            />
+          </div>
+          <div className=" text-center">
+            <button
+              onClick={() => addGithub()}
+              className="p-2 bg-cyan-400 text-white rounded btn-ghost "
+            >
+              Save
+            </button>
+          </div>
+        </label>
+      </label>
+
+      {/* Github */}
     </>
   );
 };

@@ -1,3 +1,4 @@
+import StatusUpdate from "./StatusUpdate";
 import UserHomeCard from "./UserHomeCard";
 
 const Home = () => {
@@ -8,7 +9,9 @@ const Home = () => {
           <div className="sideBar">
             <UserHomeCard />
           </div>
-          <div className="StatusUpdate">Status</div>
+          <div className="StatusUpdate">
+            <StatusUpdate />
+          </div>
           <div className="Sponsor">Sponsor</div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { UserAuth } from "../../context/AuthContext";
 import { GrEdit, GrUserSettings } from "react-icons/gr";
 import { GoLocation } from "react-icons/go";
 import { MdWork } from "react-icons/md";
+import { FaLinkedin, FaGithub } from "react-icons/fa";
 const UserHomeCard = () => {
   const { currentUser } = UserAuth();
   return (
@@ -54,10 +55,12 @@ const UserHomeCard = () => {
           {/* SOCIAL LINKS */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div>logo</div>
+              <div>
+                <FaLinkedin />
+              </div>
               <div className="flex flex-col">
-                <small>name</small>
-                <small>name</small>
+                <small className="font-semibold">LinkedIn</small>
+                <small className="text-gray-400">Network Platform</small>
               </div>
             </div>
 
@@ -69,10 +72,12 @@ const UserHomeCard = () => {
           {/* SOCIAL LINKS */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div>logo</div>
+              <div>
+                <FaGithub />
+              </div>
               <div className="flex flex-col">
-                <small>name</small>
-                <small>name</small>
+                <small className="font-semibold">Github</small>
+                <small className="text-gray-400">Developers Platform</small>
               </div>
             </div>
 

@@ -10,6 +10,8 @@ import { db, storage } from "../../../Firebase";
 import { addDoc, collection, doc, serverTimestamp } from "firebase/firestore";
 const StatusUpdate = () => {
   const imagePicker = useRef();
+  const clipPicker = useRef();
+  const audioPicker = useRef();
   const { currentUser } = UserAuth();
   const [progress, setProgress] = useState(0);
   const [imageUrl, setImageUrl] = useState("");
@@ -21,6 +23,14 @@ const StatusUpdate = () => {
     useState(false);
   const handleImageClick = () => {
     imagePicker.current.click();
+  };
+
+  const handleClipClick = () => {
+    clipPicker.current.click();
+  };
+
+  const handleAudioClick = () => {
+    audioPicker.current.click();
   };
 
   const handleImageChange = (event) => {
@@ -142,6 +152,7 @@ const StatusUpdate = () => {
 
             <textarea
               placeholder="What's on your mind...."
+              value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="textarea  bg-base-200 textarea-xs w-full max-w-xs"
             ></textarea>
@@ -157,14 +168,14 @@ const StatusUpdate = () => {
             type="file"
             hidden
             accept="video/*"
-            ref={imagePicker}
+            ref={clipPicker}
             onChange={handleImageChange}
           />
           <input
             type="file"
             hidden
             accept="audio/*"
-            ref={imagePicker}
+            ref={audioPicker}
             onChange={handleImageChange}
           />
           {imageUrl !== "" ? (
@@ -204,7 +215,7 @@ const StatusUpdate = () => {
             </div>
             <div className="flex justify-center  items-center gap-2">
               <small
-                onClick={handleImageClick}
+                onClick={handleClipClick}
                 className="flex btn-ghost p-1 rounded items-center gap-1"
               >
                 <MdOutlineSlowMotionVideo /> Clip
@@ -217,7 +228,7 @@ const StatusUpdate = () => {
             </div> */}
             <div className="flex justify-center   items-center gap-2">
               <small
-                onClick={handleImageClick}
+                onClick={handleAudioClick}
                 className="flex btn-ghost rounded p-1 items-center gap-1"
               >
                 <AiTwotoneAudio /> Audio

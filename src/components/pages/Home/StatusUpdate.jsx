@@ -55,7 +55,7 @@ const StatusUpdate = () => {
     uploadImage(
       file,
       (progress) => {
-        setProgress(progress);
+        setProgress(Math.round(progress));
       },
       (url) => {
         if (isImage) {

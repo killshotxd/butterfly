@@ -30,6 +30,7 @@ import { useEffect, useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
 import CommentBox from "./CommentBox";
 import { FaUserAltSlash } from "react-icons/fa";
+import moment from "moment";
 
 const Feed = (state) => {
   const notUser = state.state;
@@ -325,7 +326,9 @@ const Feed = (state) => {
 
                       <div className="flex flex-col">
                         <p className="font-semibold text-xs">{res?.postedBy}</p>
-                        <p className="text-xs">location</p>
+                        <p className="text-xs">
+                          {moment(res?.time?.toDate()).fromNow()}
+                        </p>
                       </div>
                     </div>
 

@@ -199,7 +199,7 @@ const UserHomeCard = (state) => {
               </div>
               <div className="flex flex-col">
                 <span className="font-bold">{userInfo?.name}</span>
-                <span className="text-sm">
+                <span className="text-xs">
                   {/* {userInfo?.friends?.length} Friends */}
                   {userInfo?.email}
                 </span>

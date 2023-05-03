@@ -9,7 +9,7 @@ import { UserAuth } from "../../context/AuthContext";
 const Profile = () => {
   const { currentUser } = UserAuth();
   const { state } = useLocation();
-
+  console.log(state);
   return (
     <>
       <div className="py-4 mx-auto bg-base-200 min-h-screen container px-10">
@@ -23,7 +23,7 @@ const Profile = () => {
             )} */}
           </div>
           <div>
-            {state ? (
+            {state && state.email !== currentUser.email ? (
               ""
             ) : (
               <div>

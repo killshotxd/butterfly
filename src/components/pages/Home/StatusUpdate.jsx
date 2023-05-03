@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import toast, { Toaster } from "react-hot-toast";
 import { UserAuth } from "../../context/AuthContext";
 import { BsFileImage } from "react-icons/bs";
 import { MdOutlineSlowMotionVideo } from "react-icons/md";
@@ -11,18 +12,24 @@ import { db, storage } from "../../../Firebase";
 import { addDoc, collection, doc, serverTimestamp } from "firebase/firestore";
 import { IoIosRemoveCircle } from "react-icons/io";
 const StatusUpdate = () => {
+  // REFS
   const imagePicker = useRef();
   const clipPicker = useRef();
   const audioPicker = useRef();
+
   const { currentUser } = UserAuth();
+
+  // STATES
   const [progress, setProgress] = useState(0);
   const [imageUrl, setImageUrl] = useState("");
   const [clipUrl, setClipUrl] = useState("");
   const [audioUrl, setAudioUrl] = useState("");
   const [description, setDescription] = useState("");
-  console.log(progress);
   const [profileImageUploadStarted, setProfileImageUploadStarted] =
     useState(false);
+
+  // FUNCTIONS
+
   const handleImageClick = () => {
     imagePicker.current.click();
   };
@@ -35,25 +42,14 @@ const StatusUpdate = () => {
     audioPicker.current.click();
   };
 
-  const removeImg = () => {
-    setImageUrl("");
-  };
-
-  const removeClip = () => {
-    setClipUrl("");
-  };
-
-  const removeAudi = () => {
-    setAudioUrl("");
-  };
-
+  // GETTING FILES
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     const fileType = file.type;
     const isImage = fileType.includes("image");
     const isClip = fileType.includes("video");
     const isAudio = fileType.includes("audio");
-    console.log(file);
+
     if (!file) return;
     setProfileImageUploadStarted(true);
     uploadImage(
@@ -82,27 +78,18 @@ const StatusUpdate = () => {
     );
   };
 
+  // UPLOAD TO FIREBASE STORAGE
   const uploadImage = (file, progressCallback, urlCallback, errorCallback) => {
     if (!file) {
       errorCallback("File not found");
       return;
     }
-
     const fileType = file.type;
-    const fileSize = file.size / 1024 / 1024;
-
-    // if (fileSize > 2) {
-    //   errorCallback("File must smaller than 2MB");
-    //   return;
-    // }
-
     const storageRef = ref(
       storage,
       `${currentUser.email}/${fileType}/${file.name}`
     );
-
     const task = uploadBytesResumable(storageRef, file);
-
     task.on(
       "state_changed",
       (snapshot) => {
@@ -121,19 +108,13 @@ const StatusUpdate = () => {
     );
   };
 
+  // UPLOADING POST TO FIREBASE DB
   const handlePostUpload = async () => {
-    // const UserSpecificPostRef = collection(
-    //   db,
-    //   "posts",
-    //   currentUser.email,
-    //   "post"
-    // );
     const allPostRef = collection(db, "posts");
-
     if (description == "") {
+      toast.error("Please Enter a description!");
       return;
     }
-
     let post = {
       avatar: currentUser.photoURL,
       email: currentUser.email,
@@ -146,9 +127,9 @@ const StatusUpdate = () => {
       likes: 0,
       postedBy: currentUser.displayName,
     };
-    // await addDoc(UserSpecificPostRef, post);
-    await addDoc(allPostRef, post);
 
+    await addDoc(allPostRef, post);
+    toast.success("Post updated successfully!");
     setDescription("");
 
     setImageUrl("");
@@ -159,6 +140,7 @@ const StatusUpdate = () => {
 
   return (
     <>
+      <Toaster />
       <div className="card w-full bg-base-100 shadow-md">
         <div className="card-body">
           <div className="flex items-center justify-center gap-3">
@@ -201,7 +183,6 @@ const StatusUpdate = () => {
               completedClassName="barCompleted"
               className="px-4 "
               labelClassName="labelProgress"
-              // barContainerClassName="containerProgress"
               completed={progress}
             />
           )}
@@ -248,11 +229,7 @@ const StatusUpdate = () => {
                 <MdOutlineSlowMotionVideo /> Clip
               </small>
             </div>
-            {/* <div className="flex  items-center gap-2">
-              <small className="flex items-center gap-1">
-                <IoMdAttach /> Attachment
-              </small>
-            </div> */}
+
             <div className="flex justify-center   items-center gap-2">
               <small
                 onClick={handleAudioClick}

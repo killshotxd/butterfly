@@ -2,7 +2,7 @@ import Feed from "./Feed";
 import SponsorCard from "./SponsorCard";
 import StatusUpdate from "./StatusUpdate";
 import UserHomeCard from "./UserHomeCard";
-
+// LAYOUT
 const Home = () => {
   return (
     <>

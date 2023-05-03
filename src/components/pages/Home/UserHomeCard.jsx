@@ -1,4 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { UserAuth } from "../../context/AuthContext";
+import toast, { Toaster } from "react-hot-toast";
 import { GrEdit, GrUserSettings } from "react-icons/gr";
 import { GoLocation } from "react-icons/go";
 import { MdWork } from "react-icons/md";
@@ -15,21 +17,18 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 const UserHomeCard = (state) => {
-  console.log(state);
   const notUser = state.state;
-  console.log(notUser);
+
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
   const [userInfo, setUserinfo] = useState();
   const { currentUser } = UserAuth();
-  console.log(userInfo);
+
   const [handleLocation, setHandleLocation] = useState("");
   const [handleDesignation, setHandleDesignation] = useState("");
   const [handleLinkedin, setHandleLinkedin] = useState("");
   const [handleGithub, setHandleGithub] = useState("");
-
-  console.log(userInfo);
 
   // GET USER INFO
   const getUserInfo = async () => {
@@ -65,7 +64,7 @@ const UserHomeCard = (state) => {
             ...userData,
             Details: userCollectionData,
           };
-          console.log(userInfo);
+
           setUserinfo(userInfo);
 
           return userInfo;
@@ -101,7 +100,7 @@ const UserHomeCard = (state) => {
             ...userData,
             Details: userCollectionData,
           };
-          console.log(userInfo);
+
           setUserinfo(userInfo);
 
           return userInfo;
@@ -121,48 +120,69 @@ const UserHomeCard = (state) => {
   // ADD INFO LINKS TO DB
 
   const addLocation = async () => {
+    if (handleLocation == "") {
+      toast.error("Please Enter Location!");
+      return;
+    }
     const { email } = currentUser;
     const detailRef = doc(db, "users", email);
     let loc = {
       location: handleLocation,
     };
-    console.log(loc);
+
     await setDoc(detailRef, loc, { merge: true });
+    toast.success("Location updated successfully!");
   };
   const addDesignation = async () => {
+    if (handleDesignation == "") {
+      toast.error("Please Enter Designation!");
+      return;
+    }
     const { email } = currentUser;
     const detailRef = doc(db, "users", email);
     let loc = {
       designation: handleDesignation,
     };
-    console.log(loc);
+
     await setDoc(detailRef, loc, { merge: true });
+    toast.success("Designation updated successfully!");
   };
 
   const addLinkedin = async () => {
+    if (handleLinkedin == "") {
+      toast.error("Please Enter Linkedin Url!");
+      return;
+    }
     const { email } = currentUser;
     const detailRef = doc(db, "users", email);
     let loc = {
       linkedin: handleLinkedin,
     };
-    console.log(loc);
+
     await setDoc(detailRef, loc, { merge: true });
+    toast.success("Linkedin Profile updated successfully!");
   };
 
   const addGithub = async () => {
+    if (handleGithub == "") {
+      toast.error("Please Enter Github Url!");
+      return;
+    }
     const { email } = currentUser;
     const detailRef = doc(db, "users", email);
     let loc = {
       github: handleGithub,
     };
-    console.log(loc);
+
     await setDoc(detailRef, loc, { merge: true });
+    toast.success("Github Profile updated successfully!");
   };
 
   // ADD INFO LINKS TO DB
 
   return (
     <>
+      <Toaster />
       <div className="card w-full bg-base-100 shadow-md">
         <div className="card-body">
           {/* NAME,Friends */}
@@ -355,13 +375,14 @@ const UserHomeCard = (state) => {
               onChange={(e) => setHandleLocation(e.target.value)}
             />
           </div>
-          <div className=" text-center">
-            <button
+          <div className=" py-2 text-center">
+            <label
+              htmlFor="location"
               onClick={() => addLocation()}
               className="p-2 bg-cyan-400 text-white rounded btn-ghost "
             >
               Save
-            </button>
+            </label>
           </div>
         </label>
       </label>
@@ -381,13 +402,14 @@ const UserHomeCard = (state) => {
               onChange={(e) => setHandleDesignation(e.target.value)}
             />
           </div>
-          <div className=" text-center">
-            <button
+          <div className=" py-2 text-center">
+            <label
+              htmlFor="designation"
               onClick={() => addDesignation()}
               className="p-2 bg-cyan-400 text-white rounded btn-ghost "
             >
               Save
-            </button>
+            </label>
           </div>
         </label>
       </label>
@@ -406,13 +428,14 @@ const UserHomeCard = (state) => {
               onChange={(e) => setHandleLinkedin(e.target.value)}
             />
           </div>
-          <div className=" text-center">
-            <button
+          <div className=" py-2 text-center">
+            <label
+              htmlFor="linkedin"
               onClick={() => addLinkedin()}
               className="p-2 bg-cyan-400 text-white rounded btn-ghost "
             >
               Save
-            </button>
+            </label>
           </div>
         </label>
       </label>
@@ -431,13 +454,14 @@ const UserHomeCard = (state) => {
               onChange={(e) => setHandleGithub(e.target.value)}
             />
           </div>
-          <div className=" text-center">
-            <button
+          <div className=" py-2 text-center">
+            <label
+              htmlFor="github"
               onClick={() => addGithub()}
               className="p-2 bg-cyan-400 text-white rounded btn-ghost "
             >
               Save
-            </button>
+            </label>
           </div>
         </label>
       </label>

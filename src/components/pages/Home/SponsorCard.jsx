@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 const SponsorCard = () => {
   return (
     <>
@@ -5,7 +6,7 @@ const SponsorCard = () => {
         <div className="card-body">
           <div className="flex items-center justify-between">
             <span className="font-semibold">Sponsored</span>
-            <small>Create an Ad</small>
+            {/* <small>Create an Ad</small> */}
           </div>
           <figure className="pt-4">
             <img
@@ -15,15 +16,14 @@ const SponsorCard = () => {
             />
           </figure>
           <div className="flex items-center pt-4 justify-between">
-            <small className="font-semibold">Brand</small>
-            <small>email@gmail.com</small>
+            <small className="font-semibold">McDonald</small>
+            <small>McDonals@gmail.com</small>
           </div>
           <div>
             <p className="text-xs">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi
-              corrupti dicta adipisci deleniti nesciunt pariatur, temporibus
-              reprehenderit cumque nobis atque, debitis ullam ab laborum libero
-              tempore minima eligendi voluptatibus! Dolor!
+              Experience the joy of a juicy, delicious burger and crispy fries
+              at McDonald's. Fast, convenient, and always satisfying. Come dine
+              with us today!
             </p>
           </div>
         </div>

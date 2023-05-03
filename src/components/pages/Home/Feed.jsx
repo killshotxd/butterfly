@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
+import toast, { Toaster } from "react-hot-toast";
 import { MdPersonAdd } from "react-icons/md";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import { AiOutlineHeart } from "react-icons/ai";
 import { BiCommentDots, BiSend } from "react-icons/bi";
 import { IoMdShare } from "react-icons/io";
 import { BiTrash } from "react-icons/bi";
@@ -28,12 +30,19 @@ import { useEffect, useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
 import CommentBox from "./CommentBox";
 import { FaUserAltSlash } from "react-icons/fa";
+
 const Feed = (state) => {
   const notUser = state.state;
+
   const location = useLocation();
+
   const navigate = useNavigate();
+
   const { currentUser } = UserAuth();
+
   const pathname = location.pathname;
+
+  //STATES
   const [posts, setPosts] = useState();
   const [showComments, setShowComments] = useState(false);
   const [commentInp, setCommentInp] = useState("");
@@ -43,7 +52,8 @@ const Feed = (state) => {
   const [commentLoading, setCommentLoading] = useState(false);
   const [friendsList, setFriendsList] = useState(false);
   const [userInfo, setUserinfo] = useState(false);
-  const [postLiked, setPostLiked] = useState();
+
+  // GET ALL POSTS
   const getAllPosts = async () => {
     const postsRef = collection(db, "posts");
     if (state && notUser?.email) {
@@ -89,43 +99,35 @@ const Feed = (state) => {
       return { unsubscribe };
     }
   };
-  console.log(notUser);
-
-  console.log(posts);
 
   useEffect(() => {
     getAllPosts();
   }, []);
 
   // DELETE POST
-
   const handlePostDelete = async (did) => {
     const docRef = doc(collection(db, "posts"), did);
-    // await deleteDoc(UserSpecificPostRef);
     await deleteDoc(docRef);
+    toast.success("Post deleted successfully! ");
   };
 
-  // LIKE
-
+  // LIKE POST
   const handlePostsLike = async (post) => {
     const likesRef = collection(db, "likes");
+    const postLikesQuery = query(
+      likesRef,
+      where("postId", "==", post.did),
+      where("likedBy", "==", currentUser.email)
+    );
+    const postLikes = await getDocs(postLikesQuery);
     const postDocRef = doc(collection(db, "posts"), post.did);
 
-    // Fetch the post's likes
-    const postLikesQuery = query(likesRef, where("postId", "==", post.did));
-    const postLikes = await getDocs(postLikesQuery);
-
-    // Check if the user has already liked the post
-    const userLikes = postLikes.docs.filter(
-      (doc) => doc.data().likedBy === currentUser.email
-    );
-    const postIsLiked = userLikes.length > 0;
-
-    if (postIsLiked) {
+    if (postLikes.size > 0) {
       // Post has already been liked, remove the like
-      const likeDocRef = doc(likesRef, userLikes[0].id);
+      const likeDocRef = doc(likesRef, postLikes.docs[0].id);
       await deleteDoc(likeDocRef);
       await updateDoc(postDocRef, { likes: post.likes - 1 });
+      toast.success("Post Unlike done 😁! ");
     } else {
       // Post has not been liked yet, add a new like
       await addDoc(likesRef, {
@@ -134,9 +136,8 @@ const Feed = (state) => {
         createdAt: serverTimestamp(),
       });
       await updateDoc(postDocRef, { likes: post.likes + 1 });
+      toast.success("Post Liked 😁! ");
     }
-
-    setPostLiked(!postIsLiked);
   };
 
   // COMMENT
@@ -156,6 +157,7 @@ const Feed = (state) => {
       const comments = await getComments(post.did);
       setSelectedPostComments(comments);
       setCommentInp("");
+      toast.success("Comment Added 😁! ");
       console.log("Comment added with ID: ", docRef.id);
     } catch (error) {
       console.error("Error adding comment: ", error);
@@ -180,6 +182,7 @@ const Feed = (state) => {
       console.error("Error", error);
     }
   };
+
   const handleToggleComments = async (postId) => {
     setShowCommentId(postId);
 
@@ -193,7 +196,6 @@ const Feed = (state) => {
   };
 
   // Add Friend
-
   const handleAddFriend = async (res) => {
     try {
       const currentUserRef = doc(db, "users", currentUser.email);
@@ -210,6 +212,7 @@ const Feed = (state) => {
       });
 
       getUserInfo();
+      toast.success("Friend Added 😁! ");
       console.log("Friend added successfully");
     } catch (error) {
       console.error("Error adding friend", error);
@@ -246,12 +249,14 @@ const Feed = (state) => {
         });
       });
       getUserInfo();
+      toast.success("Friend Removed ! ");
       console.log("Friend removed successfully");
     } catch (error) {
       console.error("Error removing friend", error);
     }
   };
 
+  // USER INFO
   const getUserInfo = async () => {
     const { email } = currentUser;
     const userRef = doc(db, "users", email);
@@ -279,7 +284,7 @@ const Feed = (state) => {
           ...userData,
           Details: userCollectionData,
         };
-        console.log(userInfo);
+
         setUserinfo(userInfo);
 
         return userInfo;
@@ -295,6 +300,7 @@ const Feed = (state) => {
 
   return (
     <>
+      <Toaster />
       {posts?.length == 0 ? (
         "Please Post Something"
       ) : (
@@ -340,27 +346,7 @@ const Feed = (state) => {
                             <BiTrash />
                           </span>
                         ) : (
-                          <>
-                            {/* {userInfo?.friends?.includes(res.email) ? (
-                              <span
-                                onClick={() => {
-                                  handleRemoveFriend(res);
-                                }}
-                                className="bg-red-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
-                              >
-                                <FaUserAltSlash />
-                              </span>
-                            ) : (
-                              <span
-                                onClick={() => {
-                                  handleAddFriend(res);
-                                }}
-                                className="bg-cyan-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
-                              >
-                                <MdPersonAdd />
-                              </span>
-                            )} */}
-                          </>
+                          <></>
                         )}
                       </>
                     )}
@@ -402,8 +388,7 @@ const Feed = (state) => {
                         onClick={() => handlePostsLike(res)}
                         className="flex items-center gap-1 hover:bg-slate-300 p-1 rounded-full"
                       >
-                        {postLiked ? <AiFillHeart /> : <AiOutlineHeart />}
-                        {/* <AiOutlineHeart />{" "} */}
+                        <AiOutlineHeart />{" "}
                         <span className="text-sm">{res.likes}</span>
                       </div>
                       <div
@@ -415,9 +400,6 @@ const Feed = (state) => {
                         <BiCommentDots />
                       </div>
                     </div>
-                    <span className="hover:bg-slate-300 p-1 rounded-full">
-                      <IoMdShare />
-                    </span>
                   </div>
 
                   {showComments && showCommentId === res.did && (

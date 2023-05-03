@@ -18,7 +18,6 @@ const FriendListCard = (state) => {
   const { currentUser } = UserAuth();
   const [userInfo, setUserInfo] = useState();
   const user = state.state;
-  console.log(user);
 
   const getUserInfo = async () => {
     const userRef = doc(db, "users", user.email);
@@ -51,7 +50,7 @@ const FriendListCard = (state) => {
           ...userData,
           Details: userCollectionData,
         };
-        console.log(userInfo);
+
         setUserInfo(userInfo);
 
         return userInfo;

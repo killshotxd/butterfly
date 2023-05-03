@@ -1,10 +1,9 @@
 import moment from "moment";
 const CommentBox = (commentRes) => {
-  console.log(commentRes);
   const formattedTime = moment(
     commentRes.commentRes.timeStamp.toDate()
   ).fromNow();
-  console.log(formattedTime);
+
   return (
     <>
       <div

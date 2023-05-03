@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
 import { createContext, useContext, useEffect, useState } from "react";
 import {
@@ -7,7 +8,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth, db } from "../../Firebase";
-import { collection, doc, onSnapshot, query, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 // create context
 const AuthContext = createContext();
 
@@ -36,20 +37,6 @@ export const AuthProvider = ({ children }) => {
   // Sign Out
   const logout = () => {
     signOut(auth);
-  };
-
-  // GET FRIEND LIST
-
-  const getFriends = async () => {
-    const friendsRef = collection(db, "users")
-      .doc(currentUser.email)
-      .collection("friends");
-    const queryy = query(friendsRef);
-    const unsubscribe = onSnapshot(queryy, (querySnapshot) => {
-      const friends = querySnapshot.docs.map((doc) => doc.data());
-      setFriendsList(friends);
-    });
-    return unsubscribe;
   };
 
   //   set current User

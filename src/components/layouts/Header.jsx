@@ -70,12 +70,12 @@ const Header = () => {
               tabIndex={0}
               className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
             >
-              <li onClick={() => navigate("/profile")}>
+              {/* <li onClick={() => navigate("/profile")}>
                 <p className="justify-between active:bg-cyan-300">
                   Profile
                   <span className="badge">New</span>
                 </p>
-              </li>
+              </li> */}
 
               <li onClick={() => handleLogout()}>
                 <p className="active:bg-cyan-300">Logout</p>

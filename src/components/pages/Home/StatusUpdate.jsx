@@ -2,12 +2,14 @@
 import { UserAuth } from "../../context/AuthContext";
 import { BsFileImage } from "react-icons/bs";
 import { MdOutlineSlowMotionVideo } from "react-icons/md";
+import ProgressBar from "@ramonak/react-progress-bar";
 // import { IoMdAttach } from "react-icons/io";
 import { AiTwotoneAudio } from "react-icons/ai";
 import { useRef, useState } from "react";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "../../../Firebase";
 import { addDoc, collection, doc, serverTimestamp } from "firebase/firestore";
+import { IoIosRemoveCircle } from "react-icons/io";
 const StatusUpdate = () => {
   const imagePicker = useRef();
   const clipPicker = useRef();
@@ -18,7 +20,7 @@ const StatusUpdate = () => {
   const [clipUrl, setClipUrl] = useState("");
   const [audioUrl, setAudioUrl] = useState("");
   const [description, setDescription] = useState("");
-  console.log(imageUrl);
+  console.log(progress);
   const [profileImageUploadStarted, setProfileImageUploadStarted] =
     useState(false);
   const handleImageClick = () => {
@@ -31,6 +33,18 @@ const StatusUpdate = () => {
 
   const handleAudioClick = () => {
     audioPicker.current.click();
+  };
+
+  const removeImg = () => {
+    setImageUrl("");
+  };
+
+  const removeClip = () => {
+    setClipUrl("");
+  };
+
+  const removeAudi = () => {
+    setAudioUrl("");
   };
 
   const handleImageChange = (event) => {
@@ -182,6 +196,15 @@ const StatusUpdate = () => {
             ref={audioPicker}
             onChange={handleImageChange}
           />
+          {profileImageUploadStarted && (
+            <ProgressBar
+              completedClassName="barCompleted"
+              className="px-4 "
+              labelClassName="labelProgress"
+              // barContainerClassName="containerProgress"
+              completed={progress}
+            />
+          )}
           {imageUrl !== "" ? (
             <div className="w-full customImgDiv flex justify-center m-auto items-center bg-base-200 px-2 max-w-xs">
               <figure>

@@ -1,5 +1,10 @@
+import moment from "moment";
 const CommentBox = (commentRes) => {
   console.log(commentRes);
+  const formattedTime = moment(
+    commentRes.commentRes.timeStamp.toDate()
+  ).fromNow();
+  console.log(formattedTime);
   return (
     <>
       <div
@@ -10,7 +15,7 @@ const CommentBox = (commentRes) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <div className="avatar">
-                <div className="w-8 rounded-full ">
+                <div className="w-6 rounded-full ">
                   <img src={commentRes.commentRes.avatar} />
                 </div>
               </div>
@@ -20,7 +25,7 @@ const CommentBox = (commentRes) => {
               </small>
             </div>
 
-            <small>2 days ago</small>
+            <small>{formattedTime}</small>
           </div>
 
           <div className="px-4 pl-10">

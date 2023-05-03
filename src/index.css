@@ -42,3 +42,17 @@
     transform: rotate(360deg);
   }
 }
+
+.barCompleted {
+  background-color: cyan;
+  display: flex;
+  justify-content: end;
+  padding-right: 2%;
+}
+.labelProgress {
+  font-size: small;
+  color: #fff;
+}
+/* .containerProgress {
+  height: 15px;
+} */

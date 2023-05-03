@@ -82,7 +82,10 @@ const StatusUpdate = () => {
     //   return;
     // }
 
-    const storageRef = ref(storage, `${currentUser.email}/${fileType}`);
+    const storageRef = ref(
+      storage,
+      `${currentUser.email}/${fileType}/${file.name}`
+    );
 
     const task = uploadBytesResumable(storageRef, file);
 
@@ -126,6 +129,7 @@ const StatusUpdate = () => {
       description: description,
       uid: currentUser.uid,
       time: serverTimestamp(),
+      likes: 0,
       postedBy: currentUser.displayName,
     };
     // await addDoc(UserSpecificPostRef, post);

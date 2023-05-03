@@ -25,6 +25,10 @@ const StatusUpdate = () => {
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
+    const fileType = file.type;
+    const isImage = fileType.includes("image");
+    const isClip = fileType.includes("video");
+    const isAudio = fileType.includes("audio");
     console.log(file);
     if (!file) return;
     setProfileImageUploadStarted(true);
@@ -34,7 +38,14 @@ const StatusUpdate = () => {
         setProgress(progress);
       },
       (url) => {
-        setImageUrl(url);
+        if (isImage) {
+          setImageUrl(url);
+        } else if (isClip) {
+          setClipUrl(url);
+        } else if (isAudio) {
+          setAudioUrl(url);
+        }
+        // setImageUrl(url);
         uploadImage(url);
         console.log("After", url);
         setProfileImageUploadStarted(false);
@@ -56,16 +67,12 @@ const StatusUpdate = () => {
     const fileType = file.type;
     const fileSize = file.size / 1024 / 1024;
 
-    if (!fileType?.includes("image")) {
-      errorCallback("File must an image");
-      return;
-    }
-    if (fileSize > 2) {
-      errorCallback("File must smaller than 2MB");
-      return;
-    }
+    // if (fileSize > 2) {
+    //   errorCallback("File must smaller than 2MB");
+    //   return;
+    // }
 
-    const storageRef = ref(storage, `images/${currentUser.email}/${file.name}`);
+    const storageRef = ref(storage, `${currentUser.email}/${fileType}`);
 
     const task = uploadBytesResumable(storageRef, file);
 
@@ -142,6 +149,21 @@ const StatusUpdate = () => {
           <input
             type="file"
             hidden
+            accept="image/*"
+            ref={imagePicker}
+            onChange={handleImageChange}
+          />
+          <input
+            type="file"
+            hidden
+            accept="video/*"
+            ref={imagePicker}
+            onChange={handleImageChange}
+          />
+          <input
+            type="file"
+            hidden
+            accept="audio/*"
             ref={imagePicker}
             onChange={handleImageChange}
           />
@@ -153,8 +175,23 @@ const StatusUpdate = () => {
             </div>
           ) : (
             ""
+          )}{" "}
+          {clipUrl !== "" ? (
+            <div className="w-full customImgDiv flex justify-center m-auto items-center bg-base-200 px-2 max-w-xs">
+              <video width="750" height="500" controls>
+                <source src={clipUrl} type="video/mp4" />
+              </video>
+            </div>
+          ) : (
+            ""
           )}
-
+          {audioUrl !== "" ? (
+            <div className="w-full customImgDiv flex justify-center m-auto items-center bg-base-200 px-2 max-w-xs">
+              <audio src={audioUrl} controls />
+            </div>
+          ) : (
+            ""
+          )}
           <hr />
           <div className="grid grid-cols-4 gap-4">
             <div className="flex justify-center  items-center gap-2">
@@ -166,7 +203,10 @@ const StatusUpdate = () => {
               </small>
             </div>
             <div className="flex justify-center  items-center gap-2">
-              <small className="flex btn-ghost p-1 rounded items-center gap-1">
+              <small
+                onClick={handleImageClick}
+                className="flex btn-ghost p-1 rounded items-center gap-1"
+              >
                 <MdOutlineSlowMotionVideo /> Clip
               </small>
             </div>
@@ -176,7 +216,10 @@ const StatusUpdate = () => {
               </small>
             </div> */}
             <div className="flex justify-center   items-center gap-2">
-              <small className="flex btn-ghost rounded p-1 items-center gap-1">
+              <small
+                onClick={handleImageClick}
+                className="flex btn-ghost rounded p-1 items-center gap-1"
+              >
                 <AiTwotoneAudio /> Audio
               </small>
             </div>

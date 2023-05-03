@@ -35,6 +35,20 @@ const Feed = (state) => {
       });
 
       return { unsubscribe };
+    } else if (location.pathname == "/profile") {
+      const queryyPersonal = query(
+        postsRef,
+        where("email", "==", currentUser?.email)
+      );
+      const unsubscribe = onSnapshot(queryyPersonal, (querySnapshot) => {
+        const dbpost = [];
+        querySnapshot.forEach((doc) => {
+          dbpost.push({ ...doc.data(), did: doc.id });
+        });
+        setPosts(dbpost);
+      });
+
+      return { unsubscribe };
     } else {
       const unsubscribe = onSnapshot(postsRef, (querySnapshot) => {
         const dbpost = [];
@@ -47,14 +61,13 @@ const Feed = (state) => {
       return { unsubscribe };
     }
   };
+  console.log(notUser);
 
   console.log(posts);
 
   useEffect(() => {
     getAllPosts();
   }, []);
-
-  const handleProfileView = (uid) => {};
 
   const handlePostDelete = async (did) => {
     // const UserSpecificPostRef = doc(
@@ -93,7 +106,8 @@ const Feed = (state) => {
                   </div>
                 </div>
 
-                {pathname == "/profile" ? (
+                {pathname == "/profile" &&
+                notUser?.email == currentUser?.email ? (
                   <span className="bg-red-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost">
                     <BiTrash />
                   </span>
@@ -128,6 +142,15 @@ const Feed = (state) => {
                     <img src={res.img} alt="postImg" className="rounded-xl" />
                   </figure>
                 )}
+                {res.clip == "" ? (
+                  ""
+                ) : (
+                  <video width="850" height="700" controls>
+                    <source src={res.clip} type="video/mp4" />
+                  </video>
+                )}
+
+                {res.audio == "" ? "" : <audio src={res.audio} controls />}
               </div>
 
               <div className="flex items-center px-2 justify-between">

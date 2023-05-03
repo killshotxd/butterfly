@@ -23,7 +23,7 @@ const UserHomeCard = (state) => {
   const pathname = location.pathname;
   const [userInfo, setUserinfo] = useState();
   const { currentUser } = UserAuth();
-
+  console.log(userInfo);
   const [handleLocation, setHandleLocation] = useState("");
   const [handleDesignation, setHandleDesignation] = useState("");
   const [handleLinkedin, setHandleLinkedin] = useState("");
@@ -34,8 +34,8 @@ const UserHomeCard = (state) => {
   // GET USER INFO
   const getUserInfo = async () => {
     const { email } = currentUser;
-    if (email !== notUser.email) {
-      const userRef = doc(db, "users", notUser.email);
+    if (notUser?.email) {
+      const userRef = doc(db, "users", notUser?.email);
 
       // Get user document snapshot
       const userDocSnapshot = await getDoc(userRef);
@@ -49,9 +49,45 @@ const UserHomeCard = (state) => {
         const notifyCollectionRef = collection(
           db,
           "users",
-          notUser.email,
+          notUser?.email,
           "Profile"
         );
+
+        // Listen for changes in the user sub-collection
+        const unsubscribe = onSnapshot(notifyCollectionRef, (querySnapshot) => {
+          const userCollectionData = querySnapshot.docs.map((doc) => ({
+            did: doc.id,
+            ...doc.data(),
+          }));
+
+          // Combine user data and user sub-collection data
+          const userInfo = {
+            ...userData,
+            Details: userCollectionData,
+          };
+          console.log(userInfo);
+          setUserinfo(userInfo);
+
+          return userInfo;
+        });
+
+        return unsubscribe;
+      } else {
+        console.log("User document does not exist.");
+      }
+    } else {
+      const userRef = doc(db, "users", email);
+
+      // Get user document snapshot
+      const userDocSnapshot = await getDoc(userRef);
+
+      // Check if the user document exists
+      if (userDocSnapshot.exists()) {
+        // Get user data
+        const userData = userDocSnapshot.data();
+
+        // Get user sub-collections
+        const notifyCollectionRef = collection(db, "users", email, "Profile");
 
         // Listen for changes in the user sub-collection
         const unsubscribe = onSnapshot(notifyCollectionRef, (querySnapshot) => {
@@ -133,12 +169,7 @@ const UserHomeCard = (state) => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <div className="avatar online">
-                <div
-                  onClick={() => {
-                    navigate("/profile");
-                  }}
-                  className="w-10 rounded-full"
-                >
+                <div className="w-10 rounded-full">
                   {notUser ? (
                     <img src={notUser.avatar} />
                   ) : (
@@ -172,7 +203,8 @@ const UserHomeCard = (state) => {
                 <GoLocation />{" "}
                 {userInfo?.location ? userInfo.location : "Location"}
               </small>
-              {pathname == "/profile" ? (
+              {pathname == "/profile" &&
+              currentUser?.email == notUser?.email ? (
                 <label
                   htmlFor="location"
                   className="hover:bg-slate-300 text-sm p-1 rounded-full"
@@ -188,7 +220,8 @@ const UserHomeCard = (state) => {
                 <MdWork />{" "}
                 {userInfo?.designation ? userInfo.designation : "Designation"}
               </small>
-              {pathname == "/profile" ? (
+              {pathname == "/profile" &&
+              currentUser?.email == notUser?.email ? (
                 <label
                   htmlFor="designation"
                   className="hover:bg-slate-300 text-sm p-1 rounded-full"
@@ -235,12 +268,16 @@ const UserHomeCard = (state) => {
                 >
                   <FiExternalLink />
                 </a>
-                <label
-                  htmlFor="linkedin"
-                  className="hover:bg-slate-300 text-sm p-1 rounded-full"
-                >
-                  <GrEdit />
-                </label>
+                {currentUser?.email == notUser?.email ? (
+                  <label
+                    htmlFor="linkedin"
+                    className="hover:bg-slate-300 text-sm p-1 rounded-full"
+                  >
+                    <GrEdit />
+                  </label>
+                ) : (
+                  ""
+                )}
               </div>
             ) : (
               <a
@@ -276,12 +313,16 @@ const UserHomeCard = (state) => {
                 >
                   <FiExternalLink />
                 </a>
-                <label
-                  htmlFor="github"
-                  className="hover:bg-slate-300 text-sm p-1 rounded-full"
-                >
-                  <GrEdit />
-                </label>
+                {currentUser?.email == notUser?.email ? (
+                  <label
+                    htmlFor="github"
+                    className="hover:bg-slate-300 text-sm p-1 rounded-full"
+                  >
+                    <GrEdit />
+                  </label>
+                ) : (
+                  ""
+                )}
               </div>
             ) : (
               <a

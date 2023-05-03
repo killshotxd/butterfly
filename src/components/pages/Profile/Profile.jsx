@@ -5,6 +5,8 @@ import StatusUpdate from "../Home/StatusUpdate";
 import UserHomeCard from "../Home/UserHomeCard";
 import FriendListCard from "../Home/FriendListCard";
 import { UserAuth } from "../../context/AuthContext";
+import { BsArrowRight } from "react-icons/bs";
+import { IoIosArrowForward } from "react-icons/io";
 
 const Profile = () => {
   const { currentUser } = UserAuth();
@@ -23,8 +25,25 @@ const Profile = () => {
             )} */}
           </div>
           <div>
-            {state && state.email !== currentUser.email ? (
-              ""
+            {state && state?.email !== currentUser?.email ? (
+              <>
+                <div className="card w-full bg-base-100 shadow-md">
+                  <div className="card-body">
+                    <div className="flex items-center gap-3 justify-center">
+                      <div className="flex items-center gap-3 justify-center">
+                        <span className="font-semibold">Profile</span>{" "}
+                        <IoIosArrowForward />{" "}
+                        <span className="font-semibold">{state.postedBy}</span>
+                        <div className="avatar">
+                          <div className="w-8 rounded">
+                            <img src={state.avatar} alt="Avatar" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
             ) : (
               <div>
                 <StatusUpdate state={state} />

@@ -179,7 +179,9 @@ const UserHomeCard = (state) => {
               </div>
               <div className="flex flex-col">
                 <span className="font-bold">{currentUser.displayName}</span>
-                <span className="text-sm">0 Friends</span>
+                <span className="text-sm">
+                  {userInfo?.friends?.length} Friends
+                </span>
               </div>
             </div>
 
@@ -187,7 +189,7 @@ const UserHomeCard = (state) => {
               ""
             ) : (
               <span
-                onClick={() => navigate("/profile")}
+                onClick={() => navigate("/profile", { state: userInfo })}
                 className="hover:bg-slate-300 p-1 rounded-full"
               >
                 <GrUserSettings />

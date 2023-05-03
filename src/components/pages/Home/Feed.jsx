@@ -6,19 +6,25 @@ import { BiTrash } from "react-icons/bi";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   addDoc,
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   onSnapshot,
   query,
   serverTimestamp,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
 import { db } from "../../../Firebase";
 import { useEffect, useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
+import CommentBox from "./CommentBox";
+import { FaUserAltSlash } from "react-icons/fa";
 const Feed = (state) => {
   const notUser = state.state;
   const location = useLocation();
@@ -31,6 +37,9 @@ const Feed = (state) => {
   const [comments, setComments] = useState();
   const [selectedPostComments, setSelectedPostComments] = useState([]);
   const [showCommentId, setShowCommentId] = useState("");
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [friendsList, setFriendsList] = useState(false);
+  const [userInfo, setUserinfo] = useState(false);
   const getAllPosts = async () => {
     const postsRef = collection(db, "posts");
     if (state && notUser?.email) {
@@ -78,38 +87,15 @@ const Feed = (state) => {
     getAllPosts();
   }, []);
 
-  const handlePostDelete = async (did) => {
-    // const UserSpecificPostRef = doc(
-    //   collection(db, "posts", currentUser.email, "post"),
-    //   did
-    // );
+  // DELETE POST
 
+  const handlePostDelete = async (did) => {
     const docRef = doc(collection(db, "posts"), did);
     // await deleteDoc(UserSpecificPostRef);
     await deleteDoc(docRef);
   };
 
-  // const handlePostsLike = async (res) => {
-  //   const docRef = doc(collection(db, "posts"), res.did);
-
-  //   if (res.likedBy == currentUser.email) {
-  //     res.likes--;
-  //     let likeCount = {
-  //       likedBy: "",
-  //       likes: res.likes,
-  //     };
-  //     console.log(likeCount);
-  //     return;
-  //   } else {
-  //     res.likes++;
-  //     let likeCount = {
-  //       likedBy: currentUser.email,
-  //       likes: res.likes,
-  //     };
-  //     console.log(likeCount);
-  //     await updateDoc(docRef, likeCount);
-  //   }
-  // };
+  // LIKE POST
 
   const handlePostsLike = async (post) => {
     const likesRef = collection(db, "likes");
@@ -137,6 +123,7 @@ const Feed = (state) => {
     }
   };
 
+  // COMMENT
   const handlePostComment = async (post) => {
     try {
       const commentsRef = collection(db, "comments");
@@ -161,6 +148,7 @@ const Feed = (state) => {
 
   const getComments = async (postId) => {
     try {
+      setCommentLoading(true);
       const commentsRef = collection(db, "comments");
       const queryy = query(commentsRef, where("postId", "==", postId));
       const querySnapshot = await getDocs(queryy);
@@ -170,6 +158,7 @@ const Feed = (state) => {
       }));
 
       setComments(comments);
+      setCommentLoading(false);
       return comments;
     } catch (error) {
       console.error("Error", error);
@@ -186,6 +175,75 @@ const Feed = (state) => {
       setSelectedPostComments(comments);
     }
   };
+
+  // Add Friend
+
+  const handleAddFriend = async (res) => {
+    try {
+      const userRef = doc(db, "users", currentUser.email);
+      await updateDoc(userRef, {
+        friends: arrayUnion(res.email),
+      });
+      getUserInfo();
+      console.log("Friend added successfully");
+    } catch (error) {
+      console.error("Error adding friend", error);
+    }
+  };
+
+  const handleRemoveFriend = async (res) => {
+    try {
+      const userRef = doc(db, "users", currentUser.email);
+      await updateDoc(userRef, {
+        friends: arrayRemove(res.email),
+      });
+      getUserInfo();
+      console.log("Friend removed successfully");
+    } catch (error) {
+      console.error("Error removing friend", error);
+    }
+  };
+
+  const getUserInfo = async () => {
+    const { email } = currentUser;
+    const userRef = doc(db, "users", email);
+
+    // Get user document snapshot
+    const userDocSnapshot = await getDoc(userRef);
+
+    // Check if the user document exists
+    if (userDocSnapshot.exists()) {
+      // Get user data
+      const userData = userDocSnapshot.data();
+
+      // Get user sub-collections
+      const notifyCollectionRef = collection(db, "users", email, "Profile");
+
+      // Listen for changes in the user sub-collection
+      const unsubscribe = onSnapshot(notifyCollectionRef, (querySnapshot) => {
+        const userCollectionData = querySnapshot.docs.map((doc) => ({
+          did: doc.id,
+          ...doc.data(),
+        }));
+
+        // Combine user data and user sub-collection data
+        const userInfo = {
+          ...userData,
+          Details: userCollectionData,
+        };
+        console.log(userInfo);
+        setUserinfo(userInfo);
+
+        return userInfo;
+      });
+
+      return unsubscribe;
+    }
+  };
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
 
   return (
     <>
@@ -230,9 +288,27 @@ const Feed = (state) => {
                         <BiTrash />
                       </span>
                     ) : (
-                      <span className="bg-cyan-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost">
-                        <MdPersonAdd />
-                      </span>
+                      <>
+                        {userInfo?.friends?.includes(res.email) ? (
+                          <span
+                            onClick={() => {
+                              handleRemoveFriend(res);
+                            }}
+                            className="bg-red-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                          >
+                            <FaUserAltSlash />
+                          </span>
+                        ) : (
+                          <span
+                            onClick={() => {
+                              handleAddFriend(res);
+                            }}
+                            className="bg-cyan-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                          >
+                            <MdPersonAdd />
+                          </span>
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -289,33 +365,11 @@ const Feed = (state) => {
 
                   {selectedPostComments?.map((commentRes) => (
                     <>
-                      {console.log(commentRes)}
-                      <div
-                        key={commentRes.id}
-                        className="px-2 py-2 bg-base-200 rounded"
-                      >
-                        <div className="px-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1">
-                              <div className="avatar">
-                                <div className="w-8 rounded-full ">
-                                  <img src={commentRes.avatar} />
-                                </div>
-                              </div>
-
-                              <small className="font-semibold">
-                                {commentRes.commenterName}
-                              </small>
-                            </div>
-
-                            <small>2 days ago</small>
-                          </div>
-
-                          <div className="px-4 pl-10">
-                            <p className="text-xs">{commentRes.comment}</p>
-                          </div>
-                        </div>
-                      </div>
+                      {commentLoading ? (
+                        <div className="loader flex m-auto items-center justify-center "></div>
+                      ) : (
+                        <CommentBox commentRes={commentRes} />
+                      )}
                     </>
                   ))}
                   <hr />

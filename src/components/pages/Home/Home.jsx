@@ -1,4 +1,5 @@
 import Feed from "./Feed";
+import FriendListCard from "./FriendListCard";
 import SponsorCard from "./SponsorCard";
 import StatusUpdate from "./StatusUpdate";
 import UserHomeCard from "./UserHomeCard";
@@ -19,8 +20,9 @@ const Home = () => {
               <Feed />
             </div>
           </div>
-          <div className="Sponsor">
+          <div className="Sponsor flex flex-col gap-4">
             <SponsorCard />
+            <FriendListCard />
           </div>
         </div>
       </div>

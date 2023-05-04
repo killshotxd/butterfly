@@ -30,7 +30,7 @@ import { useEffect, useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
 import CommentBox from "./CommentBox";
 import { FaUserAltSlash } from "react-icons/fa";
-import { HiOutlineDownload } from "react-icons/hi";
+import { HiOutlineDownload, HiUserAdd, HiUserRemove } from "react-icons/hi";
 import moment from "moment";
 
 const Feed = (state) => {
@@ -54,6 +54,7 @@ const Feed = (state) => {
   const [commentLoading, setCommentLoading] = useState(false);
   const [friendsList, setFriendsList] = useState(false);
   const [userInfo, setUserinfo] = useState(false);
+  const [friendList, setFriendList] = useState(false);
 
   // GET ALL POSTS
   const getAllPosts = async () => {
@@ -197,11 +198,45 @@ const Feed = (state) => {
     }
   };
 
+  const getFriendList = async () => {
+    const friendRef = collection(
+      doc(db, "friends", currentUser.email),
+      "friend"
+    );
+
+    const unsubscribe = onSnapshot(friendRef, (querySnapshot) => {
+      const userCollectionData = querySnapshot.docs.map((doc) => ({
+        did: doc.id,
+        ...doc.data(),
+      }));
+      console.log(userCollectionData);
+      setFriendList(userCollectionData);
+    });
+  };
+
+  useEffect(() => {
+    getFriendList();
+  }, []);
+
   // Add Friend
   const handleAddFriend = async (res) => {
     try {
       const currentUserRef = doc(db, "users", currentUser.email);
       const friendRef = doc(db, "users", res.email);
+      const listFriendMine = doc(
+        db,
+        "friends",
+        currentUser?.email,
+        "friend",
+        res?.email
+      );
+      const listFriendOther = doc(
+        db,
+        "friends",
+        res?.email,
+        "friend",
+        currentUser?.email
+      );
 
       // Add the friend's email to the current user's friend list
       await updateDoc(currentUserRef, {
@@ -211,6 +246,22 @@ const Feed = (state) => {
       // Add the current user's email to the friend's friend list
       await updateDoc(friendRef, {
         friends: arrayUnion(currentUser.email),
+      });
+
+      // Add the friends to currentUSer email collection of friend
+      await setDoc(listFriendMine, {
+        name: res.postedBy,
+        email: res.email,
+        avatar: res.avatar,
+        addedOn: serverTimestamp(),
+      });
+
+      // Add the friends to currentUSer email collection of friend
+      await setDoc(listFriendOther, {
+        name: currentUser.displayName,
+        email: currentUser.email,
+        avatar: currentUser.photoURL,
+        addedOn: serverTimestamp(),
       });
 
       getUserInfo();
@@ -225,6 +276,20 @@ const Feed = (state) => {
     try {
       const currentUserRef = doc(db, "users", currentUser.email);
       const friendRef = doc(db, "users", friend.email);
+      const listFriend = doc(
+        db,
+        "friends",
+        currentUser.email,
+        "friend",
+        friend?.email
+      );
+      const listFriendOther = doc(
+        db,
+        "friends",
+        friend?.email,
+        "friend",
+        currentUser?.email
+      );
       await runTransaction(db, async (transaction) => {
         const currentUserDoc = await transaction.get(currentUserRef);
         const friendDoc = await transaction.get(friendRef);
@@ -250,7 +315,10 @@ const Feed = (state) => {
           friends: arrayRemove(currentUser.email),
         });
       });
+      await deleteDoc(listFriend, friend.email);
+      await deleteDoc(listFriendOther, currentUser.email);
       getUserInfo();
+      getFriendList();
       toast.success("Friend Removed ! ");
       console.log("Friend removed successfully");
     } catch (error) {
@@ -315,9 +383,9 @@ const Feed = (state) => {
         "Please Post Something"
       ) : (
         <>
-          {posts?.map((res) => (
+          {posts?.map((res, index) => (
             <>
-              <div key={res.did} className="card w-full bg-base-100 shadow-md">
+              <div key={index} className="card w-full bg-base-100 shadow-md">
                 <div className="card-body">
                   {/*  */}
                   <div className="flex items-center gap-4 justify-between">
@@ -358,7 +426,28 @@ const Feed = (state) => {
                             <BiTrash />
                           </span>
                         ) : (
-                          <></>
+                          <>
+                            {userInfo?.friends?.includes(res?.email) &&
+                            res.email ? (
+                              <span
+                                onClick={() => {
+                                  handleRemoveFriend(res);
+                                }}
+                                className="bg-red-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                              >
+                                <HiUserRemove />
+                              </span>
+                            ) : (
+                              <span
+                                onClick={() => {
+                                  handleAddFriend(res);
+                                }}
+                                className="bg-cyan-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                              >
+                                <HiUserAdd />
+                              </span>
+                            )}
+                          </>
                         )}
                       </>
                     )}

@@ -30,6 +30,7 @@ import { useEffect, useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
 import CommentBox from "./CommentBox";
 import { FaUserAltSlash } from "react-icons/fa";
+import { HiOutlineDownload } from "react-icons/hi";
 import moment from "moment";
 
 const Feed = (state) => {
@@ -299,6 +300,14 @@ const Feed = (state) => {
     getUserInfo();
   }, []);
 
+  const downloadImage = (url) => {
+    var element = document.createElement("a");
+    var file = new Blob([url], { type: "image/*" });
+    element.href = URL.createObjectURL(file);
+    element.download = "image.jpg";
+    element.click();
+  };
+
   return (
     <>
       <Toaster />
@@ -383,6 +392,16 @@ const Feed = (state) => {
                     ) : (
                       <audio className="w-full" src={res.audio} controls />
                     )}
+
+                    {/* {res.img == "" ? (
+                      ""
+                    ) : (
+                      <div className="flex items-center gap-1 float-right mt-2 bg-cyan-400 p-2 rounded ">
+                        <a href={res.img} download className="text-white">
+                          <HiOutlineDownload />
+                        </a>
+                      </div>
+                    )} */}
                   </div>
 
                   <div className="flex items-center px-2 justify-between">

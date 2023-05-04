@@ -131,6 +131,7 @@ const UserHomeCard = (state) => {
     };
 
     await setDoc(detailRef, loc, { merge: true });
+    getUserInfo();
     toast.success("Location updated successfully!");
   };
   const addDesignation = async () => {
@@ -145,6 +146,7 @@ const UserHomeCard = (state) => {
     };
 
     await setDoc(detailRef, loc, { merge: true });
+    getUserInfo();
     toast.success("Designation updated successfully!");
   };
 
@@ -160,6 +162,7 @@ const UserHomeCard = (state) => {
     };
 
     await setDoc(detailRef, loc, { merge: true });
+    getUserInfo();
     toast.success("Linkedin Profile updated successfully!");
   };
 
@@ -175,6 +178,7 @@ const UserHomeCard = (state) => {
     };
 
     await setDoc(detailRef, loc, { merge: true });
+    getUserInfo();
     toast.success("Github Profile updated successfully!");
   };
 

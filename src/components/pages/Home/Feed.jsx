@@ -145,6 +145,10 @@ const Feed = (state) => {
 
   // COMMENT
   const handlePostComment = async (post) => {
+    if (commentInp == "") {
+      toast("Please enter a comment!!");
+      return;
+    }
     try {
       const commentsRef = collection(db, "comments");
       const newComment = {

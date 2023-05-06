@@ -213,7 +213,7 @@ const Feed = (state) => {
         did: doc.id,
         ...doc.data(),
       }));
-      console.log(userCollectionData);
+
       setFriendList(userCollectionData);
     });
   };

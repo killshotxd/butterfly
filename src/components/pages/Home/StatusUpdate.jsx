@@ -67,7 +67,7 @@ const StatusUpdate = () => {
         }
         // setImageUrl(url);
         uploadImage(url);
-        console.log("After", url);
+
         setProfileImageUploadStarted(false);
         setProgress(0);
       },

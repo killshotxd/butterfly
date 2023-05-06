@@ -11,7 +11,7 @@ import { IoIosArrowForward } from "react-icons/io";
 const Profile = () => {
   const { currentUser } = UserAuth();
   const { state } = useLocation();
-  console.log(state);
+
   return (
     <>
       <div className="py-4 mx-auto bg-base-200 min-h-screen container px-10">

@@ -5,6 +5,7 @@ import Login from "./components/pages/Login";
 import { UserAuth } from "./components/context/AuthContext";
 import Header from "./components/layouts/Header";
 import Profile from "./components/pages/Profile/Profile";
+import Message from "./components/pages/MessageBox/Message";
 
 const App = () => {
   const { currentUser } = UserAuth();
@@ -33,6 +34,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/message"
+          element={
+            <PrivateRoute>
+              <Message />
             </PrivateRoute>
           }
         />

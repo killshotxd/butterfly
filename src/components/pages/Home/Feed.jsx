@@ -415,7 +415,7 @@ const Feed = (state) => {
 
                     {pathname == "/profile" &&
                     notUser?.email == currentUser?.email ? (
-                      <span className="bg-red-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost">
+                      <span className="bg-red-400 hover:bg-red-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost">
                         <BiTrash />
                       </span>
                     ) : (
@@ -425,7 +425,7 @@ const Feed = (state) => {
                             onClick={() => {
                               handlePostDelete(res.did);
                             }}
-                            className="bg-red-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                            className="bg-red-400 p-1 hover:bg-red-600 rounded-full text-white flex items-center justify-center btn-ghost"
                           >
                             <BiTrash />
                           </span>
@@ -437,7 +437,7 @@ const Feed = (state) => {
                                 onClick={() => {
                                   handleRemoveFriend(res);
                                 }}
-                                className="bg-red-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                                className="bg-red-400 hover:bg-red-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
                               >
                                 <HiUserRemove />
                               </span>
@@ -446,7 +446,7 @@ const Feed = (state) => {
                                 onClick={() => {
                                   handleAddFriend(res);
                                 }}
-                                className="bg-cyan-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                                className="bg-cyan-400 hover:bg-cyan-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
                               >
                                 <HiUserAdd />
                               </span>

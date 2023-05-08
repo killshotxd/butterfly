@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import Feed from "../Home/Feed";
 import StatusUpdate from "../Home/StatusUpdate";
 import UserHomeCard from "../Home/UserHomeCard";
-import FriendListCard from "../Home/FriendListCard";
+import FriendListCard from "./FriendListCard";
 import { UserAuth } from "../../context/AuthContext";
 import { BsArrowRight } from "react-icons/bs";
 import { IoIosArrowForward } from "react-icons/io";
@@ -18,6 +18,7 @@ const Profile = () => {
         <div className="grid grid-cols-2 max-sm:grid-cols-1 max-md:justify-center max-md:grid-cols-2 lg:grid-cols-2 gap-8">
           <div className="flex flex-col gap-4">
             <UserHomeCard state={state} />
+            <FriendListCard />
             {/* {currentUser.email == state?.email ? (
               <FriendListCard state={state} />
             ) : (

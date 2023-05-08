@@ -15,7 +15,10 @@ import { BiTrash } from "react-icons/bi";
 import { UserAuth } from "../../context/AuthContext";
 import { HiUserRemove } from "react-icons/hi";
 import toast, { Toaster } from "react-hot-toast";
+import { TbMessageCircle } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
 const FriendListCard = (state) => {
+  const navigate = useNavigate();
   const { currentUser } = UserAuth();
   const [userInfo, setUserInfo] = useState();
   const user = state.state;
@@ -168,14 +171,25 @@ const FriendListCard = (state) => {
                       <p>{friend.name}</p>
                     </div>
 
-                    <span
-                      onClick={() => {
-                        handleRemoveFriend(friend);
-                      }}
-                      className="bg-red-400 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
-                    >
-                      <HiUserRemove />
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span
+                        onClick={() => {
+                          handleRemoveFriend(friend);
+                        }}
+                        className="bg-red-400 hover:bg-red-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                      >
+                        <HiUserRemove />
+                      </span>
+
+                      <span
+                        onClick={() => {
+                          navigate("/message", { state: friend });
+                        }}
+                        className="bg-cyan-400 cursor-pointer hover:bg-cyan-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                      >
+                        <TbMessageCircle />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </>

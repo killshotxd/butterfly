@@ -22,6 +22,7 @@ const UserHomeCard = (state) => {
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
+
   const [userInfo, setUserinfo] = useState();
   const { currentUser } = UserAuth();
 
@@ -210,7 +211,7 @@ const UserHomeCard = (state) => {
               </div>
             </div>
 
-            {pathname == "/profile" ? (
+            {pathname == "/profile" || pathname == "/message" ? (
               ""
             ) : (
               <span

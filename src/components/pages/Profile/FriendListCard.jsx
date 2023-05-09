@@ -144,58 +144,64 @@ const FriendListCard = (state) => {
   return (
     <>
       <Toaster />
-      {userInfo?.length == 0 ? (
-        <>
-          <div className="card w-full bg-base-100 shadow-md">
-            <div className="card-body">
-              <p>Please Add some friend ! 😁</p>
-            </div>
-          </div>
-        </>
+      {user?.email !== currentUser?.email ? (
+        ""
       ) : (
-        <div className="card w-full bg-base-100 shadow-md">
-          <div className="card-body">
-            <div>
-              <span className="font-semibold">Friend List 🙂</span>
-            </div>
-            {userInfo?.map((friend, index) => (
-              <>
-                <div key={index}>
-                  <div className="flex items-center justify-between ">
-                    <div className="flex items-center  gap-4">
-                      <div className="avatar">
-                        <div className="w-10 rounded-full">
-                          <img src={friend.avatar} />
+        <>
+          {userInfo?.length == 0 ? (
+            <>
+              <div className="card w-full bg-base-100 shadow-md">
+                <div className="card-body">
+                  <p>Please Add some friend ! 😁</p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="card w-full bg-base-100 shadow-md">
+              <div className="card-body">
+                <div>
+                  <span className="font-semibold">Friend List 🙂</span>
+                </div>
+                {userInfo?.map((friend, index) => (
+                  <>
+                    <div key={index}>
+                      <div className="flex items-center justify-between ">
+                        <div className="flex items-center  gap-4">
+                          <div className="avatar">
+                            <div className="w-10 rounded-full">
+                              <img src={friend.avatar} />
+                            </div>
+                          </div>
+                          <p>{friend.name}</p>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <span
+                            onClick={() => {
+                              handleRemoveFriend(friend);
+                            }}
+                            className="bg-red-400 hover:bg-red-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                          >
+                            <HiUserRemove />
+                          </span>
+
+                          <span
+                            onClick={() => {
+                              navigate("/message", { state: friend });
+                            }}
+                            className="bg-cyan-400 cursor-pointer hover:bg-cyan-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                          >
+                            <TbMessageCircle />
+                          </span>
                         </div>
                       </div>
-                      <p>{friend.name}</p>
                     </div>
-
-                    <div className="flex items-center gap-3">
-                      <span
-                        onClick={() => {
-                          handleRemoveFriend(friend);
-                        }}
-                        className="bg-red-400 hover:bg-red-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
-                      >
-                        <HiUserRemove />
-                      </span>
-
-                      <span
-                        onClick={() => {
-                          navigate("/message", { state: friend });
-                        }}
-                        className="bg-cyan-400 cursor-pointer hover:bg-cyan-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
-                      >
-                        <TbMessageCircle />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ))}
-          </div>
-        </div>
+                  </>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </>
   );

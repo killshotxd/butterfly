@@ -18,7 +18,7 @@ const Profile = () => {
         <div className="grid grid-cols-2 max-sm:grid-cols-1 max-md:justify-center max-md:grid-cols-2 lg:grid-cols-2 gap-8">
           <div className="flex flex-col gap-4">
             <UserHomeCard state={state} />
-            <FriendListCard />
+            <FriendListCard state={state} />
             {/* {currentUser.email == state?.email ? (
               <FriendListCard state={state} />
             ) : (

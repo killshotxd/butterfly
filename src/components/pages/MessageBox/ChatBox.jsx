@@ -41,18 +41,18 @@ const ChatBox = (state) => {
   return (
     <>
       <div className="card w-full bg-base-100 shadow-md">
-        <div className="card-body">
-          <div className="rounded bg-base-200 mb-4 p-3 flex items-center m-auto gap-4">
-            <div>
-              Chatting with :{" "}
-              <span className="font-semibold">{notUser.name}</span>{" "}
-            </div>
-            <div className="avatar">
-              <div className="w-8 rounded">
-                <img src={notUser.avatar} alt="Avatar" />
-              </div>
+        <div className="rounded bg-base-200 mb-4 p-3 mt-4 sticky flex items-center m-auto gap-4">
+          <div>
+            Chatting with :{" "}
+            <span className="font-semibold">{notUser.name}</span>{" "}
+          </div>
+          <div className="avatar">
+            <div className="w-8 rounded">
+              <img src={notUser.avatar} alt="Avatar" />
             </div>
           </div>
+        </div>
+        <div className="card-body msgCardScroll">
           {/* CHAT CONTAINER */}
           {messages.length == 0 ? (
             // <div className="rounded p-3 w-full text-center font-semibold justify-center flex items-center m-auto">
@@ -78,9 +78,8 @@ const ChatBox = (state) => {
               ))}
             </>
           )}
-
-          <SendMsg state={state} />
         </div>
+        <SendMsg state={state} />
         <div ref={messagesEndRef}></div>
       </div>
     </>

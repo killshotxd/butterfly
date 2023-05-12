@@ -61,7 +61,7 @@ const SendMsg = (state) => {
   return (
     <>
       <Toaster />
-      <div className="flex items-center gap-3 mt-2 justify-center">
+      <div className="flex items-center gap-3 mt-2 p-3 justify-center">
         <textarea
           placeholder="Enter your message here...."
           value={value}

@@ -16,7 +16,7 @@ const Home = () => {
             <div>
               <StatusUpdate />
             </div>
-            <div className="pt-10 flex flex-col gap-4">
+            <div className="mt-10 flex flex-col feedInfinite gap-4">
               <Feed />
             </div>
           </div>

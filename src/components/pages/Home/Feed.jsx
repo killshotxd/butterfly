@@ -546,7 +546,7 @@ const Feed = (state) => {
                           onClick={() => {
                             handlePostComment(res);
                           }}
-                          className="bg-cyan-400   text-white hover:bg-cyan-600 p-1 w-8 flex justify-center m-auto h-full text-sm rounded"
+                          className="bg-cyan-400   text-white hover:bg-cyan-600 p-1 w-8 flex justify-center m-auto  text-sm rounded"
                         >
                           <BiSend />
                         </button>

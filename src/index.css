@@ -60,6 +60,7 @@
 .feedInfinite {
   height: 100vh;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 .feedInfinite::-webkit-scrollbar,
@@ -76,4 +77,5 @@
 .msgCardScroll {
   height: 63.5vh;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }

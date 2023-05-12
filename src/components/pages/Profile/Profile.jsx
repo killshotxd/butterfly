@@ -51,7 +51,7 @@ const Profile = () => {
               </div>
             )}
 
-            <div className="pt-10 flex flex-col gap-4">
+            <div className="mt-10 flex feedInfinite flex-col gap-4">
               <Feed state={state} />
             </div>
           </div>

@@ -56,3 +56,24 @@
 /* .containerProgress {
   height: 15px;
 } */
+
+.feedInfinite {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.feedInfinite::-webkit-scrollbar,
+.msgCardScroll::-webkit-scrollbar {
+  display: none;
+}
+
+.feedInfinite,
+.msgCardScroll {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.msgCardScroll {
+  height: 63.5vh;
+  overflow-y: auto;
+}

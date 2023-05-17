@@ -468,7 +468,7 @@ const Feed = (state) => {
                         <img
                           src={res.img}
                           alt="postImg"
-                          className="rounded-xl"
+                          className="rounded-xl w-4/5"
                         />
                       </figure>
                     )}

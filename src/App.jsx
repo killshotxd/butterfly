@@ -6,6 +6,7 @@ import { UserAuth } from "./components/context/AuthContext";
 import Header from "./components/layouts/Header";
 import Profile from "./components/pages/Profile/Profile";
 import Message from "./components/pages/MessageBox/Message";
+import AdPage from "./components/pages/Ad/AdPage";
 
 const App = () => {
   const { currentUser } = UserAuth();
@@ -42,6 +43,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <Message />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/ad/:amount"
+          element={
+            <PrivateRoute>
+              <AdPage />
             </PrivateRoute>
           }
         />

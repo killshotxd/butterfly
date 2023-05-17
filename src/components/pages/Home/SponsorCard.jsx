@@ -1,3 +1,5 @@
+import AdModal from "./AdModal";
+
 /* eslint-disable react/no-unescaped-entities */
 const SponsorCard = () => {
   return (
@@ -6,6 +8,9 @@ const SponsorCard = () => {
         <div className="card-body">
           <div className="flex items-center justify-between">
             <span className="font-semibold">Sponsored</span>
+            <label htmlFor="my-modal-4" className="text-sm cursor-pointer">
+              Create an Ad
+            </label>
             {/* <small>Create an Ad</small> */}
           </div>
           <figure className="pt-4">
@@ -28,6 +33,14 @@ const SponsorCard = () => {
           </div>
         </div>
       </div>
+
+      {/* MODAL */}
+      <input type="checkbox" id="my-modal-4" className="modal-toggle" />
+      <label htmlFor="my-modal-4" className="modal cursor-pointer">
+        <label className="modal-box relative" htmlFor="">
+          <AdModal />
+        </label>
+      </label>
     </>
   );
 };

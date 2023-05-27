@@ -57,11 +57,11 @@
   height: 15px;
 } */
 
-.feedInfinite {
+/* .feedInfinite {
   height: 100vh;
   overflow-y: auto;
   scroll-behavior: smooth;
-}
+} */
 
 .feedInfinite::-webkit-scrollbar,
 .msgCardScroll::-webkit-scrollbar {

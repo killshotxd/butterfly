@@ -415,7 +415,12 @@ const Feed = (state) => {
 
                     {pathname == "/profile" &&
                     notUser?.email == currentUser?.email ? (
-                      <span className="bg-red-400 hover:bg-red-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost">
+                      <span
+                        onClick={() => {
+                          handlePostDelete(res.did);
+                        }}
+                        className="bg-red-400 hover:bg-red-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                      >
                         <BiTrash />
                       </span>
                     ) : (

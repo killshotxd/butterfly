@@ -16,7 +16,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import ContentLoader from "react-content-loader";
+
 const UserHomeCard = (state) => {
   const notUser = state.state;
 
@@ -31,10 +31,9 @@ const UserHomeCard = (state) => {
   const [handleDesignation, setHandleDesignation] = useState("");
   const [handleLinkedin, setHandleLinkedin] = useState("");
   const [handleGithub, setHandleGithub] = useState("");
-  const [loading, setLoading] = useState(false);
+
   // GET USER INFO
   const getUserInfo = async () => {
-    setLoading(true);
     const { email } = currentUser;
     if (notUser?.email) {
       const userRef = doc(db, "users", notUser?.email);
@@ -69,7 +68,6 @@ const UserHomeCard = (state) => {
           };
 
           setUserinfo(userInfo);
-          setLoading(false);
 
           return userInfo;
         });
@@ -79,7 +77,6 @@ const UserHomeCard = (state) => {
         console.log("User document does not exist.");
       }
     } else {
-      setLoading(true);
       const userRef = doc(db, "users", email);
 
       // Get user document snapshot
@@ -107,7 +104,7 @@ const UserHomeCard = (state) => {
           };
 
           setUserinfo(userInfo);
-          setLoading(false);
+
           return userInfo;
         });
 
@@ -192,135 +189,108 @@ const UserHomeCard = (state) => {
   return (
     <>
       <Toaster />
-      {loading ? (
-        <ContentLoader viewBox="0 0 380 70">
-          {/* Only SVG shapes */}
-          <rect x="0" y="0" rx="5" ry="5" width="70" height="70" />
-          <rect x="80" y="17" rx="4" ry="4" width="300" height="13" />
-          <rect x="80" y="40" rx="3" ry="3" width="250" height="10" />
-        </ContentLoader>
-      ) : (
-        <div className="card w-full bg-base-100 shadow-md">
-          <div className="card-body">
-            {/* NAME,Friends */}
 
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4">
-                <div className="avatar online">
-                  <div className="w-10 rounded-full">
-                    {notUser ? (
-                      <img src={notUser.avatar} />
-                    ) : (
-                      <img src={currentUser.photoURL} />
-                    )}
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold">{userInfo?.name}</span>
-                  <span className="text-xs">
-                    {/* {userInfo?.friends?.length} Friends */}
-                    {userInfo?.email}
-                  </span>
-                </div>
-              </div>
+      <div className="card w-full bg-base-100 shadow-md">
+        <div className="card-body">
+          {/* NAME,Friends */}
 
-              {pathname == "/profile" || pathname == "/message" ? (
-                ""
-              ) : (
-                <span
-                  onClick={() => navigate("/profile", { state: userInfo })}
-                  className="hover:bg-slate-300 p-1 rounded-full"
-                >
-                  <GrUserSettings />
-                </span>
-              )}
-            </div>
-            {/* NAME,Friends */}
-            <hr />
-            {/* LOCATION */}
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <small className="flex items-center gap-2">
-                  <GoLocation />{" "}
-                  {userInfo?.location ? userInfo.location : "Location"}
-                </small>
-                {pathname == "/profile" &&
-                currentUser?.email == notUser?.email ? (
-                  <label
-                    htmlFor="location"
-                    className="hover:bg-slate-300 text-sm p-1 rounded-full"
-                  >
-                    <GrEdit />
-                  </label>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="flex items-center justify-between">
-                <small className="flex items-center gap-2">
-                  <MdWork />{" "}
-                  {userInfo?.designation ? userInfo.designation : "Designation"}
-                </small>
-                {pathname == "/profile" &&
-                currentUser?.email == notUser?.email ? (
-                  <label
-                    htmlFor="designation"
-                    className="hover:bg-slate-300 text-sm p-1 rounded-full"
-                  >
-                    <GrEdit />
-                  </label>
-                ) : (
-                  ""
-                )}
-              </div>
-            </div>
-            {/* LOCATION */}
-            <hr />
-
-            {/* PROFILE VIEWS/IMPRESSIONS */}
-            <small className="flex items-center justify-between">
-              Profile Views in last 7 days
-              <span className="font-semibold">21</span>{" "}
-            </small>
-            <small className="flex items-center justify-between">
-              Impressions in last 7 days
-              <span className="font-semibold">1021</span>
-            </small>
-            {/* PROFILE VIEWS/IMPRESSIONS */}
-            <hr />
-            {/* SOCIAL LINKS */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div>
-                  <FaLinkedin size={25} />
-                </div>
-                <div className="flex flex-col">
-                  <small className="font-semibold">LinkedIn</small>
-                  <small className="text-gray-400">Network Platform</small>
-                </div>
-              </div>
-              {pathname == "/profile" ? (
-                <div className="flex items-center gap-2">
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    href={userInfo?.linkedin}
-                    className="hover:bg-slate-300 p-1 rounded-full"
-                  >
-                    <FiExternalLink />
-                  </a>
-                  {currentUser?.email == notUser?.email ? (
-                    <label
-                      htmlFor="linkedin"
-                      className="hover:bg-slate-300 text-sm p-1 rounded-full"
-                    >
-                      <GrEdit />
-                    </label>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <div className="avatar online">
+                <div className="w-10 rounded-full">
+                  {notUser ? (
+                    <img src={notUser.avatar} />
                   ) : (
-                    ""
+                    <img src={currentUser.photoURL} />
                   )}
                 </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold">{userInfo?.name}</span>
+                <span className="text-xs">
+                  {/* {userInfo?.friends?.length} Friends */}
+                  {userInfo?.email}
+                </span>
+              </div>
+            </div>
+
+            {pathname == "/profile" || pathname == "/message" ? (
+              ""
+            ) : (
+              <span
+                onClick={() => navigate("/profile", { state: userInfo })}
+                className="hover:bg-slate-300 p-1 rounded-full"
+              >
+                <GrUserSettings />
+              </span>
+            )}
+          </div>
+          {/* NAME,Friends */}
+          <hr />
+          {/* LOCATION */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <small className="flex items-center gap-2">
+                <GoLocation />{" "}
+                {userInfo?.location ? userInfo.location : "Location"}
+              </small>
+              {pathname == "/profile" &&
+              currentUser?.email == notUser?.email ? (
+                <label
+                  htmlFor="location"
+                  className="hover:bg-slate-300 text-sm p-1 rounded-full"
+                >
+                  <GrEdit />
+                </label>
               ) : (
+                ""
+              )}
+            </div>
+            <div className="flex items-center justify-between">
+              <small className="flex items-center gap-2">
+                <MdWork />{" "}
+                {userInfo?.designation ? userInfo.designation : "Designation"}
+              </small>
+              {pathname == "/profile" &&
+              currentUser?.email == notUser?.email ? (
+                <label
+                  htmlFor="designation"
+                  className="hover:bg-slate-300 text-sm p-1 rounded-full"
+                >
+                  <GrEdit />
+                </label>
+              ) : (
+                ""
+              )}
+            </div>
+          </div>
+          {/* LOCATION */}
+          <hr />
+
+          {/* PROFILE VIEWS/IMPRESSIONS */}
+          <small className="flex items-center justify-between">
+            Profile Views in last 7 days
+            <span className="font-semibold">21</span>{" "}
+          </small>
+          <small className="flex items-center justify-between">
+            Impressions in last 7 days
+            <span className="font-semibold">1021</span>
+          </small>
+          {/* PROFILE VIEWS/IMPRESSIONS */}
+          <hr />
+          {/* SOCIAL LINKS */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div>
+                <FaLinkedin size={25} />
+              </div>
+              <div className="flex flex-col">
+                <small className="font-semibold">LinkedIn</small>
+                <small className="text-gray-400">Network Platform</small>
+              </div>
+            </div>
+            {pathname == "/profile" ? (
+              <div className="flex items-center gap-2">
                 <a
                   target="_blank"
                   rel="noreferrer"
@@ -329,43 +299,43 @@ const UserHomeCard = (state) => {
                 >
                   <FiExternalLink />
                 </a>
-              )}
-            </div>
-            {/* SOCIAL LINKS */}
-            {/* SOCIAL LINKS */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div>
-                  <FaGithub size={25} />
-                </div>
-                <div className="flex flex-col">
-                  <small className="font-semibold">Github</small>
-                  <small className="text-gray-400">Developers Platform</small>
-                </div>
-              </div>
-
-              {pathname == "/profile" ? (
-                <div className="flex items-center gap-2">
-                  <a
-                    target="_blank"
-                    href={userInfo?.github}
-                    rel="noreferrer"
-                    className="hover:bg-slate-300 p-1 rounded-full"
+                {currentUser?.email == notUser?.email ? (
+                  <label
+                    htmlFor="linkedin"
+                    className="hover:bg-slate-300 text-sm p-1 rounded-full"
                   >
-                    <FiExternalLink />
-                  </a>
-                  {currentUser?.email == notUser?.email ? (
-                    <label
-                      htmlFor="github"
-                      className="hover:bg-slate-300 text-sm p-1 rounded-full"
-                    >
-                      <GrEdit />
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              ) : (
+                    <GrEdit />
+                  </label>
+                ) : (
+                  ""
+                )}
+              </div>
+            ) : (
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={userInfo?.linkedin}
+                className="hover:bg-slate-300 p-1 rounded-full"
+              >
+                <FiExternalLink />
+              </a>
+            )}
+          </div>
+          {/* SOCIAL LINKS */}
+          {/* SOCIAL LINKS */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div>
+                <FaGithub size={25} />
+              </div>
+              <div className="flex flex-col">
+                <small className="font-semibold">Github</small>
+                <small className="text-gray-400">Developers Platform</small>
+              </div>
+            </div>
+
+            {pathname == "/profile" ? (
+              <div className="flex items-center gap-2">
                 <a
                   target="_blank"
                   href={userInfo?.github}
@@ -374,12 +344,31 @@ const UserHomeCard = (state) => {
                 >
                   <FiExternalLink />
                 </a>
-              )}
-            </div>
-            {/* SOCIAL LINKS */}
+                {currentUser?.email == notUser?.email ? (
+                  <label
+                    htmlFor="github"
+                    className="hover:bg-slate-300 text-sm p-1 rounded-full"
+                  >
+                    <GrEdit />
+                  </label>
+                ) : (
+                  ""
+                )}
+              </div>
+            ) : (
+              <a
+                target="_blank"
+                href={userInfo?.github}
+                rel="noreferrer"
+                className="hover:bg-slate-300 p-1 rounded-full"
+              >
+                <FiExternalLink />
+              </a>
+            )}
           </div>
+          {/* SOCIAL LINKS */}
         </div>
-      )}
+      </div>
 
       {/* LOCATION */}
       <input type="checkbox" id="location" className="modal-toggle" />

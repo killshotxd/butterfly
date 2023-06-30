@@ -32,6 +32,7 @@ import CommentBox from "./CommentBox";
 import { FaUserAltSlash } from "react-icons/fa";
 import { HiOutlineDownload, HiUserAdd, HiUserRemove } from "react-icons/hi";
 import moment from "moment";
+import ContentLoader from "react-content-loader";
 
 const Feed = (state) => {
   const notUser = state.state;
@@ -55,9 +56,10 @@ const Feed = (state) => {
   const [friendsList, setFriendsList] = useState(false);
   const [userInfo, setUserinfo] = useState(false);
   const [friendList, setFriendList] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   // GET ALL POSTS
   const getAllPosts = async () => {
+    setLoading(true);
     const postsRef = collection(db, "posts");
     if (state && notUser?.email) {
       const queryy = query(
@@ -71,10 +73,12 @@ const Feed = (state) => {
           dbpost.push({ ...doc.data(), did: doc.id });
         });
         setPosts(dbpost);
+        setLoading(false);
       });
 
       return { unsubscribe };
     } else if (location.pathname == "/profile") {
+      setLoading(true);
       const queryyPersonal = query(
         postsRef,
         where("email", "==", currentUser?.email),
@@ -86,10 +90,12 @@ const Feed = (state) => {
           dbpost.push({ ...doc.data(), did: doc.id });
         });
         setPosts(dbpost);
+        setLoading(false);
       });
 
       return { unsubscribe };
     } else {
+      setLoading(true);
       const queryyPersonal = query(postsRef, orderBy("time", "desc"));
       const unsubscribe = onSnapshot(queryyPersonal, (querySnapshot) => {
         const dbpost = [];
@@ -97,6 +103,7 @@ const Feed = (state) => {
           dbpost.push({ ...doc.data(), did: doc.id });
         });
         setPosts(dbpost);
+        setLoading(false);
       });
 
       return { unsubscribe };
@@ -332,6 +339,7 @@ const Feed = (state) => {
 
   // USER INFO
   const getUserInfo = async () => {
+    setLoading(true);
     const { email } = currentUser;
     const userRef = doc(db, "users", email);
 
@@ -360,6 +368,7 @@ const Feed = (state) => {
         };
 
         setUserinfo(userInfo);
+        setLoading(false);
 
         return userInfo;
       });
@@ -372,121 +381,132 @@ const Feed = (state) => {
     getUserInfo();
   }, []);
 
-  const downloadImage = (url) => {
-    var element = document.createElement("a");
-    var file = new Blob([url], { type: "image/*" });
-    element.href = URL.createObjectURL(file);
-    element.download = "image.jpg";
-    element.click();
-  };
+  // const downloadImage = (url) => {
+  //   var element = document.createElement("a");
+  //   var file = new Blob([url], { type: "image/*" });
+  //   element.href = URL.createObjectURL(file);
+  //   element.download = "image.jpg";
+  //   element.click();
+  // };
 
   return (
     <>
       <Toaster />
+
       {posts?.length == 0 ? (
         "Please Post Something"
       ) : (
         <>
           {posts?.map((res, index) => (
             <>
-              <div key={index} className="card w-full bg-base-100 shadow-md">
-                <div className="card-body">
-                  {/*  */}
-                  <div className="flex items-center gap-4 justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="avatar">
-                        <div
-                          onClick={() => {
-                            navigate("/profile", { state: res });
-                          }}
-                          className="w-10 rounded-full"
-                        >
-                          <img src={res.avatar} />
+              {loading ? (
+                <ContentLoader viewBox="0 0 380 70">
+                  {/* Only SVG shapes */}
+                  <rect x="0" y="0" rx="5" ry="5" width="70" height="70" />
+                  <rect x="80" y="17" rx="4" ry="4" width="300" height="13" />
+                  <rect x="80" y="40" rx="3" ry="3" width="250" height="10" />
+                </ContentLoader>
+              ) : (
+                <div key={index} className="card w-full bg-base-100 shadow-md">
+                  <div className="card-body">
+                    {/*  */}
+                    <div className="flex items-center gap-4 justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="avatar">
+                          <div
+                            onClick={() => {
+                              navigate("/profile", { state: res });
+                            }}
+                            className="w-10 rounded-full"
+                          >
+                            <img src={res.avatar} />
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col">
+                          <p className="font-semibold text-xs">
+                            {res?.postedBy}
+                          </p>
+                          <p className="text-xs">
+                            {moment(res?.time?.toDate()).fromNow()}
+                          </p>
                         </div>
                       </div>
 
-                      <div className="flex flex-col">
-                        <p className="font-semibold text-xs">{res?.postedBy}</p>
-                        <p className="text-xs">
-                          {moment(res?.time?.toDate()).fromNow()}
-                        </p>
-                      </div>
+                      {pathname == "/profile" &&
+                      notUser?.email == currentUser?.email ? (
+                        <span className="bg-red-400 hover:bg-red-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost">
+                          <BiTrash />
+                        </span>
+                      ) : (
+                        <>
+                          {res.uid == currentUser.uid ? (
+                            <span
+                              onClick={() => {
+                                handlePostDelete(res.did);
+                              }}
+                              className="bg-red-400 p-1 hover:bg-red-600 rounded-full text-white flex items-center justify-center btn-ghost"
+                            >
+                              <BiTrash />
+                            </span>
+                          ) : (
+                            <>
+                              {userInfo?.friends?.includes(res?.email) &&
+                              res.email ? (
+                                <span
+                                  onClick={() => {
+                                    handleRemoveFriend(res);
+                                  }}
+                                  className="bg-red-400 hover:bg-red-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                                >
+                                  <HiUserRemove />
+                                </span>
+                              ) : (
+                                <span
+                                  onClick={() => {
+                                    handleAddFriend(res);
+                                  }}
+                                  className="bg-cyan-400 hover:bg-cyan-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
+                                >
+                                  <HiUserAdd />
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </>
+                      )}
                     </div>
+                    {/*  */}
 
-                    {pathname == "/profile" &&
-                    notUser?.email == currentUser?.email ? (
-                      <span className="bg-red-400 hover:bg-red-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost">
-                        <BiTrash />
-                      </span>
-                    ) : (
-                      <>
-                        {res.uid == currentUser.uid ? (
-                          <span
-                            onClick={() => {
-                              handlePostDelete(res.did);
-                            }}
-                            className="bg-red-400 p-1 hover:bg-red-600 rounded-full text-white flex items-center justify-center btn-ghost"
-                          >
-                            <BiTrash />
-                          </span>
-                        ) : (
-                          <>
-                            {userInfo?.friends?.includes(res?.email) &&
-                            res.email ? (
-                              <span
-                                onClick={() => {
-                                  handleRemoveFriend(res);
-                                }}
-                                className="bg-red-400 hover:bg-red-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
-                              >
-                                <HiUserRemove />
-                              </span>
-                            ) : (
-                              <span
-                                onClick={() => {
-                                  handleAddFriend(res);
-                                }}
-                                className="bg-cyan-400 hover:bg-cyan-600 p-1 rounded-full text-white flex items-center justify-center btn-ghost"
-                              >
-                                <HiUserAdd />
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </>
-                    )}
-                  </div>
-                  {/*  */}
+                    <div className="px-3">
+                      <p>{res.description}</p>
 
-                  <div className="px-3">
-                    <p>{res.description}</p>
+                      {res.img == "" ? (
+                        ""
+                      ) : (
+                        <figure className="pt-4">
+                          <img
+                            src={res.img}
+                            alt="postImg"
+                            className="rounded-xl"
+                          />
+                        </figure>
+                      )}
+                      {res.clip == "" ? (
+                        ""
+                      ) : (
+                        <video width="850" height="700" controls>
+                          <source src={res.clip} type="video/mp4" />
+                        </video>
+                      )}
 
-                    {res.img == "" ? (
-                      ""
-                    ) : (
-                      <figure className="pt-4">
-                        <img
-                          src={res.img}
-                          alt="postImg"
-                          className="rounded-xl"
-                        />
-                      </figure>
-                    )}
-                    {res.clip == "" ? (
-                      ""
-                    ) : (
-                      <video width="850" height="700" controls>
-                        <source src={res.clip} type="video/mp4" />
-                      </video>
-                    )}
+                      {res.audio == "" ? (
+                        ""
+                      ) : (
+                        <audio className="w-full" src={res.audio} controls />
+                      )}
 
-                    {res.audio == "" ? (
-                      ""
-                    ) : (
-                      <audio className="w-full" src={res.audio} controls />
-                    )}
-
-                    {/* {res.img == "" ? (
+                      {/* {res.img == "" ? (
                       ""
                     ) : (
                       <div className="flex items-center gap-1 float-right mt-2 bg-cyan-400 p-2 rounded ">
@@ -495,66 +515,67 @@ const Feed = (state) => {
                         </a>
                       </div>
                     )} */}
-                  </div>
+                    </div>
 
-                  <div className="flex items-center px-2 justify-between">
-                    <div className="flex items-center gap-3">
-                      <div
-                        onClick={() => handlePostsLike(res)}
-                        className="flex items-center gap-1 hover:bg-slate-300 p-1 rounded-full"
-                      >
-                        <AiOutlineHeart />{" "}
-                        <span className="text-sm">{res.likes}</span>
-                      </div>
-                      <div
-                        onClick={() => {
-                          handleToggleComments(res.did);
-                        }}
-                        className="flex items-center gap-1 hover:bg-slate-300 p-1 rounded-full"
-                      >
-                        <BiCommentDots />
+                    <div className="flex items-center px-2 justify-between">
+                      <div className="flex items-center gap-3">
+                        <div
+                          onClick={() => handlePostsLike(res)}
+                          className="flex items-center gap-1 hover:bg-slate-300 p-1 rounded-full"
+                        >
+                          <AiOutlineHeart />{" "}
+                          <span className="text-sm">{res.likes}</span>
+                        </div>
+                        <div
+                          onClick={() => {
+                            handleToggleComments(res.did);
+                          }}
+                          className="flex items-center gap-1 hover:bg-slate-300 p-1 rounded-full"
+                        >
+                          <BiCommentDots />
+                        </div>
                       </div>
                     </div>
+
+                    {showComments && showCommentId === res.did && (
+                      <>
+                        {/* COMMENTS DIV */}
+
+                        {selectedPostComments?.map((commentRes) => (
+                          <>
+                            {commentLoading ? (
+                              <div className="loader flex m-auto items-center justify-center "></div>
+                            ) : (
+                              <CommentBox commentRes={commentRes} />
+                            )}
+                          </>
+                        ))}
+                        <hr />
+
+                        {/* COMMENTS DIV */}
+
+                        <div className="px-4 flex justify-center ">
+                          <input
+                            type="text"
+                            placeholder="Write Comment..."
+                            value={commentInp}
+                            className="input w-full focus-within:outline-none focus:border-none text-sm max-w-xs"
+                            onChange={(e) => setCommentInp(e.target.value)}
+                          />
+                          <button
+                            onClick={() => {
+                              handlePostComment(res);
+                            }}
+                            className="bg-cyan-400   text-white hover:bg-cyan-600 p-1 w-8 flex justify-center m-auto  text-sm rounded"
+                          >
+                            <BiSend />
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
-
-                  {showComments && showCommentId === res.did && (
-                    <>
-                      {/* COMMENTS DIV */}
-
-                      {selectedPostComments?.map((commentRes) => (
-                        <>
-                          {commentLoading ? (
-                            <div className="loader flex m-auto items-center justify-center "></div>
-                          ) : (
-                            <CommentBox commentRes={commentRes} />
-                          )}
-                        </>
-                      ))}
-                      <hr />
-
-                      {/* COMMENTS DIV */}
-
-                      <div className="px-4 flex justify-center ">
-                        <input
-                          type="text"
-                          placeholder="Write Comment..."
-                          value={commentInp}
-                          className="input w-full focus-within:outline-none focus:border-none text-sm max-w-xs"
-                          onChange={(e) => setCommentInp(e.target.value)}
-                        />
-                        <button
-                          onClick={() => {
-                            handlePostComment(res);
-                          }}
-                          className="bg-cyan-400   text-white hover:bg-cyan-600 p-1 w-8 flex justify-center m-auto  text-sm rounded"
-                        >
-                          <BiSend />
-                        </button>
-                      </div>
-                    </>
-                  )}
                 </div>
-              </div>
+              )}
             </>
           ))}
         </>

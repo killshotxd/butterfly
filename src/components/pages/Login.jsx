@@ -31,10 +31,10 @@ const Login = () => {
         <div className="hero-overlay bg-opacity-70"></div>
         <div className="hero-content text-center text-neutral-content">
           <div className="max-w-md">
-            <h1 className="mb-5 text-5xl font-bold">BUTTERFLY !</h1>
+            <h1 className="mb-5 text-5xl font-bold">Social Gram !</h1>
             <p className="mb-5">
-              Stay connected with your friends - Butterfly - Your go-to app for
-              hassle-free social needs.
+              Stay connected with your friends - Social Gram - Your go-to app
+              for hassle-free social needs.
             </p>
             <button
               onClick={() => {

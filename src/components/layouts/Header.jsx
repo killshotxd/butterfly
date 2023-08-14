@@ -21,7 +21,7 @@ const Header = () => {
             onClick={() => navigate("/")}
             className=" p-1 text-indigo-50 rounded font-semibold normal-case text-xl px-3 bg-cyan-600"
           >
-            BUTTERFLY!
+            Social!
           </a>
         </div>
         <div className="flex-none">
